@@ -1,0 +1,134 @@
+ .barra-inventario {
+   margin-bottom: 20px;
+ }
+ 
+ .contenedor-busqueda {
+   position: relative;
+   max-width: 640px;
+ }
+ 
+ .icono-busqueda {
+   position: absolute;
+   left: 12px;
+   top: 50%;
+   transform: translateY(-50%);
+   width: 16px;
+   height: 16px;
+   color: #64748b;
+ }
+ 
+ .entrada-busqueda {
+   padding-left: 36px;
+ }
+ 
+ .panel-resultados {
+   margin-top: 8px;
+   border: 1px solid var(--color-border, #e2e8f0);
+   background: var(--color-bg, #ffffff);
+   border-radius: 10px;
+   box-shadow: 0 2px 8px rgba(2, 6, 23, 0.06);
+   max-width: 640px;
+ }
+ 
+ .encabezado-resultados {
+   padding: 10px 12px;
+   font-size: 0.875rem;
+   color: #475569;
+   border-bottom: 1px solid var(--color-border, #e2e8f0);
+ }
+ 
+ .lista-resultados {
+   list-style: none;
+   margin: 0;
+   padding: 6px;
+   display: grid;
+   gap: 6px;
+ }
+ 
+ .item-resultado {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 10px 12px;
+   border-radius: 8px;
+   transition: background-color 0.15s ease;
+ }
+ 
+ .item-resultado:hover {
+   background: color-mix(in oklab, Canvas, #f1f5f9 10%);
+ }
+ 
+ .info-principal {
+   display: flex;
+   gap: 10px;
+   align-items: baseline;
+ }
+ 
+ .nombre {
+   font-weight: 600;
+   color: #0f172a;
+ }
+ 
+ .codigo {
+   font-size: 0.8rem;
+   color: #64748b;
+ }
+ 
+ .info-secundaria {
+   display: flex;
+   gap: 12px;
+   align-items: center;
+   color: #334155;
+ }
+ 
+ .icono-cantidad {
+   width: 16px;
+   height: 16px;
+   margin-right: 6px;
+   color: #64748b;
+ }
+ 
+ .cantidad {
+   display: inline-flex;
+   align-items: center;
+ }
+ 
+ .precio {
+   font-weight: 600;
+   color: #0ea5e9;
+ }
+ 
+ .estado-sin-resultados {
+   padding: 16px;
+   font-size: 0.9rem;
+   color: #64748b;
+ }
+ 
+ .dark .panel-resultados {
+   border-color: #334155;
+   background: #0f172a;
+   box-shadow: 0 2px 8px rgba(2, 6, 23, 0.35);
+ }
+ 
+ .dark .encabezado-resultados {
+   color: #94a3b8;
+   border-bottom-color: #334155;
+ }
+ 
+ .dark .item-resultado:hover {
+   background: color-mix(in oklab, #1f2937 35%, Canvas 65%);
+ }
+ 
+ .dark .nombre {
+   color: #e2e8f0;
+ }
+ 
+ .dark .codigo,
+ .dark .info-secundaria,
+ .dark .estado-sin-resultados {
+   color: #94a3b8;
+ }
+ 
+ .dark .precio {
+   color: #22d3ee;
+ }

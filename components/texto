@@ -1,0 +1,208 @@
+C:\USERS\EQJOR\DESKTOP\KIPUSOFTWARE\COMPONENTS
++---admin
+|   +---clientes
+|   |   |   clientes.tsx      
+|   |   |
+|   |   +---Anticipo
+|   |   |       registraranticipo.tsx
+|   |   |       veranticipo.tsx
+|   |   |
+|   |   +---opciones
+|   |   |       registrarcliente.tsx
+|   |   |       verlista.tsx  
+|   |   |
+|   |   \---proformas
+|   |           emitirproforma.tsx
+|   |           verlista.tsx  
+|   |
+|   +---compras
+|   |       compras.tsx       
+|   |       ingresarcompras.tsx
+|   |
+|   +---configcuenta
+|   |       configurarcuenta.tsx
+|   |
+|   +---copyfac
+|   |       copyfact.css      
+|   |       copyfact.tsx      
+|   |
+|   +---cuadricula
+|   |       cuadricula.css    
+|   |       cuadricula.jsx    
+|   |
+|   +---datacedula
+|   |       datacedula.tsx    
+|   |
+|   +---dataclients
+|   |       dataclients.tsx   
+|   |
+|   +---dataruc
+|   |       dataruc.tsx       
+|   |
+|   +---facturas
+|   |   |   facturas.tsx      
+|   |   |
+|   |   +---crearfactura      
+|   |   |       crearfactura.tsx
+|   |   |
+|   |   \---registrodefacturas
+|   |           registrodefacturas.tsx
+|   |
+|   +---inventario
+|   |       funcioninventario.tsx
+|   |       inventario.tsx    
+|   |       kardexiinventario.tsx
+|   |       tablainventario.tsx
+|   |
+|   +---paneldepermisos       
+|   |       paneldepermisos.css
+|   |       paneldepermisos.tsx
+|   |
+|   +---permiso
+|   |       permiso.jsx       
+|   |
+|   +---permisos
+|   |       permisos.css      
+|   |       permisos.tsx      
+|   |
+|   +---productos
+|   |       productos.tsx     
+|   |       registrarproducto.tsx
+|   |
+|   +---reportes
+|   |       reportes.tsx      
+|   |
+|   \---vendedores
+|           vendedores.tsx    
+|
++---background
+|       background.tsx        
+|
++---buscador
+|       buscador.css
+|       buscador.tsx
+|
++---compbarraini
+|       combarraini.css       
+|       combarraini.tsx       
+|
++---configuracion
+|       configuracion.tsx     
+|
++---funciones
+|       funciones.tsx
+|
++---iconimpt
+|       iconimpt.css
+|       iconimpt.tsx
+|
++---inicio
+|       inicio.tsx
+|
++---login
+|       login.tsx
+|
++---navbar
+|       navbar.tsx
+|
++---proveedores
+|       proveedores.css       
+|       proveedores.tsx       
+|
++---register
+|       register.tsx
+|
+\---ui
+        avatar.tsx
+        badge.tsx
+        button.tsx
+        card.tsx
+        chart.tsx
+        input.tsx
+        label.tsx
+        RECORDATORIO
+        select.tsx
+        table.tsx
+        tooltip.tsx
+
+PS C:\Users\Eqjor\Desktop\kipusoftware> cd 'c:\Users\Eqjor\Desktop\kipusoftware'
+PS C:\Users\Eqjor\Desktop\kipusoftware> tree components\admin /F /A
+Listado de rutas de carpetas
+El número de serie del volumen es D4A0-7FB4
+C:\USERS\EQJOR\DESKTOP\KIPUSOFTWARE\COMPONENTS\ADMIN        
++---clientes
+|   |   clientes.tsx
+|   |
+|   +---Anticipo
+|   |       registraranticipo.tsx
+|   |       veranticipo.tsx   
+|   |
+|   +---opciones
+|   |       registrarcliente.tsx
+|   |       verlista.tsx      
+|   |
+|   \---proformas
+|           emitirproforma.tsx
+|           verlista.tsx      
+|
++---compras
+|       compras.tsx
+|       ingresarcompras.tsx   
+|
++---configcuenta
+|       configurarcuenta.tsx  
+|
++---copyfac
+|       copyfact.css
+|       copyfact.tsx
+|
++---cuadricula
+|       cuadricula.css        
+|       cuadricula.jsx        
+|
++---datacedula
+|       datacedula.tsx        
+|
++---dataclients
+|       dataclients.tsx       
+|
++---dataruc
+|       dataruc.tsx
+|
++---facturas
+|   |   facturas.tsx
+|   |
+|   +---crearfactura
+|   |       crearfactura.tsx  
+|   |
+|   \---registrodefacturas    
+|           registrodefacturas.tsx
+|
++---inventario
+|       funcioninventario.tsx 
+|       inventario.tsx        
+|       kardexiinventario.tsx 
+|       tablainventario.tsx   
+|
++---paneldepermisos
+|       paneldepermisos.css   
+|       paneldepermisos.tsx   
+|
++---permiso
+|       permiso.jsx
+|
++---permisos
+|       permisos.css
+|       permisos.tsx
+|
++---productos
+|       productos.tsx
+|       registrarproducto.tsx 
+|
++---reportes
+|       reportes.tsx
+|
+\---vendedores
+        vendedores.tsx        
+
+PS C:\Users\Eqjor\Desktop\kipusoftware>

@@ -1,0 +1,33 @@
+para poder ejecutar el proyecto sera nescesario aplicar el comando :
+cd facturacion-frontend-main
+para acceder completamente a la carpeta del proyecto 
+npm run dev para ejecutar su host 
+
+kipusoftware/
+├── app/                    # Rutas y configuración de Next.js
+│   ├── layout.tsx          # Layout global (SEO, Fuentes, Contextos)
+│   ├── page.tsx            # Punto de entrada (Router principal)
+│   └── globals.css         # Estilos globales y tokens de diseño
+├── components/
+│   ├── admin/              # Módulos administrativos
+│   │   ├── facturas/       # Gestión de ventas
+│   │   │   ├── crearfactura/
+│   │   │   │   └── crearfactura.tsx
+│   │   │   └── facturas.tsx
+│   │   ├── inventario/     # Gestión de productos
+│   │   │   ├── inventario.tsx
+│   │   │   ├── funcioninventario.tsx  # Lógica/Hook de inventario
+│   │   │   └── tablainventario.tsx
+│   │   ├── clientes/       # Directorio de clientes
+│   │   │   └── clientes.tsx
+│   │   ├── permisos/       # Sistema de seguridad (RBAC)
+│   │   │   └── permisos.tsx
+│   │   └── paneldepermisos/# Centro de aprobaciones
+│   ├── funciones/          # Utilidades y Lógica de Negocio compartida
+│   │   └── funciones.tsx   # Hook useCrearFactura y helpers contables
+│   ├── ui/                 # Componentes base (Botones, Inputs, Cards)
+│   ├── navbar/             # Navegación principal
+│   └── login/              # Pantallas de autenticación
+├── public/                 # Recursos estáticos (Logos, Imágenes)
+├── .agent/                 # Workflows y configuración del asistente
+└── package.json            # Dependencias y scripts
