@@ -326,6 +326,11 @@ export function Inicio() {
             {esAdmin && (
               <Button variant="secondary" onClick={() => handleNavigate("permisos")}>Gestionar Usuarios</Button>
             )}
+            {esAdmin && (
+              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50" onClick={() => handleNavigate("configuracion")}>
+                Configuración Administrativa
+              </Button>
+            )}
             <Button variant="outline" className="text-slate-900 dark:text-slate-100 gap-2" onClick={handlePrintLatest}>
               <FontAwesomeIcon icon={byPrefixAndName.fajdr["print"]} />
               Imprimir última factura

@@ -23,10 +23,10 @@ import {
     Printer
 } from "lucide-react"
 
-export function VerAnticipo() {
+export function VerAnticipo({ initialBusqueda = "" }: { initialBusqueda?: string }) {
     const [anticipos, setAnticipos] = useState<Anticipo[]>(() => getAnticipos())
     const clientes = useMemo(() => getClientes(), [])
-    const [busqueda, setBusqueda] = useState("")
+    const [busqueda, setBusqueda] = useState(initialBusqueda)
     const [expandedId, setExpandedId] = useState<string | null>(null)
 
     // Modal State for New Payment
@@ -109,118 +109,139 @@ export function VerAnticipo() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid gap-4">
-                        {filtered.length === 0 ? (
-                            <div className="text-center py-12 text-slate-500 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                                <Clock className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                                <p>No se encontraron anticipos registrados.</p>
-                            </div>
-                        ) : (
-                            filtered.map((a) => {
-                                const cliente = clientes.find(c => c.identificacion === a.clienteId)
-                                const isExpanded = expandedId === a.id
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Secuencial</th>
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Cliente</th>
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Descripción</th>
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-right">Monto Total</th>
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-right">Saldo</th>
+                                    <th className="px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-center">Estado</th>
+                                    <th className="px-4 py-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y dark:divide-slate-700">
+                                {filtered.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={7} className="text-center py-12 text-slate-500 italic">
+                                            <Clock className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                            No se encontraron anticipos registrados.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filtered.map((a) => {
+                                        const cliente = clientes.find(c => c.identificacion === a.clienteId)
+                                        const isExpanded = expandedId === a.id
 
-                                return (
-                                    <Card key={a.id} className="overflow-hidden border border-slate-100 dark:border-slate-700 hover:border-purple-200 transition-colors">
-                                        <div
-                                            className="p-4 flex items-center justify-between cursor-pointer select-none bg-slate-50/30 dark:bg-slate-800/50"
-                                            onClick={() => toggleExpand(a.id)}
-                                        >
-                                            <div className="flex items-center gap-4 flex-1">
-                                                <div className={`p-2 rounded-lg ${a.estado === 'pagado' ? 'bg-green-100 text-green-600' :
-                                                        a.estado === 'parcial' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
-                                                    }`}>
-                                                    {a.estado === 'pagado' ? <CheckCircle2 className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h4 className="font-bold text-slate-900 dark:text-white">
-                                                        {cliente?.razonSocial || "Cliente no encontrado"}
-                                                    </h4>
-                                                    <p className="text-xs text-slate-500 uppercase tracking-wider">{a.descripcion}</p>
-                                                </div>
-                                                <div className="hidden md:block text-right px-6">
-                                                    <p className="text-xs text-slate-400">Total Anticipo</p>
-                                                    <p className="font-bold text-slate-900 dark:text-white font-numeric">
+                                        return (
+                                            <React.Fragment key={a.id}>
+                                                <tr
+                                                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors"
+                                                    onClick={() => toggleExpand(a.id)}
+                                                >
+                                                    <td className="px-4 py-4 font-mono font-bold text-purple-600">
+                                                        {a.secuencial || "N/A"}
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className="font-bold text-slate-900 dark:text-white">
+                                                            {cliente?.razonSocial || "Desconocido"}
+                                                        </div>
+                                                        <div className="text-xs text-slate-500">{a.clienteId}</div>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-sm text-slate-600 dark:text-slate-300 max-w-[200px] truncate">
+                                                        {a.descripcion}
+                                                    </td>
+                                                    <td className="px-4 py-4 text-right font-numeric font-bold">
                                                         ${a.montoTotal.toFixed(2)}
-                                                    </p>
-                                                </div>
-                                                <div className="text-right px-6 border-l dark:border-slate-700">
-                                                    <p className="text-xs text-slate-400">Saldo Pendiente</p>
-                                                    <p className={`font-black text-lg font-numeric ${a.saldoPendiente > 0 ? 'text-red-600' : 'text-green-600'
-                                                        }`}>
-                                                        ${a.saldoPendiente.toFixed(2)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="ml-4">
-                                                {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
-                                            </div>
-                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-right">
+                                                        <span className={`font-black font-numeric ${a.saldoPendiente > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                                            ${a.saldoPendiente.toFixed(2)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-center">
+                                                        <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${a.estado === 'pagado' ? 'bg-green-100 text-green-700' :
+                                                            a.estado === 'parcial' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'
+                                                            }`}>
+                                                            {a.estado}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-4 text-center">
+                                                        {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                                                    </td>
+                                                </tr>
+                                                {isExpanded && (
+                                                    <tr>
+                                                        <td colSpan={7} className="px-6 py-6 bg-slate-50/50 dark:bg-slate-900/30">
+                                                            <div className="animate-in slide-in-from-top-2 duration-300">
+                                                                <div className="flex justify-between items-center mb-4">
+                                                                    <h5 className="font-bold text-xs text-slate-500 uppercase tracking-[0.2em]">Historial de Pagos y Abonos</h5>
+                                                                    {a.estado !== 'pagado' && (
+                                                                        <Button
+                                                                            size="sm"
+                                                                            className="bg-purple-600 hover:bg-purple-700 gap-2 h-8 px-4 text-xs font-bold"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation()
+                                                                                setPagoModal({ open: true, anticipoId: a.id })
+                                                                            }}
+                                                                        >
+                                                                            <Plus className="w-3 h-3" /> Nuevo Abono
+                                                                        </Button>
+                                                                    )}
+                                                                </div>
 
-                                        {isExpanded && (
-                                            <div className="p-4 bg-white dark:bg-slate-800 border-t dark:border-slate-700 animate-in slide-in-from-top-2 duration-300">
-                                                <div className="flex justify-between items-center mb-4">
-                                                    <h5 className="font-bold text-sm text-slate-700 dark:text-slate-300 uppercase tracking-widest">Historial de Pagos</h5>
-                                                    {a.estado !== 'pagado' && (
-                                                        <Button
-                                                            size="sm"
-                                                            className="bg-purple-600 hover:bg-purple-700 gap-2"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-                                                                setPagoModal({ open: true, anticipoId: a.id })
-                                                            }}
-                                                        >
-                                                            <Plus className="w-4 h-4" /> Registrar Pago
-                                                        </Button>
-                                                    )}
-                                                </div>
-
-                                                <div className="rounded-lg border dark:border-slate-700 overflow-hidden">
-                                                    <table className="w-full text-sm">
-                                                        <thead className="bg-slate-50 dark:bg-slate-900">
-                                                            <tr>
-                                                                <th className="px-4 py-2 text-left font-medium text-slate-500">Fecha</th>
-                                                                <th className="px-4 py-2 text-left font-medium text-slate-500">Método</th>
-                                                                <th className="px-4 py-2 text-left font-medium text-slate-500">Referencia</th>
-                                                                <th className="px-4 py-2 text-right font-medium text-slate-500">Monto</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody className="divide-y dark:divide-slate-700">
-                                                            {a.pagos.length === 0 ? (
-                                                                <tr>
-                                                                    <td colSpan={4} className="px-4 py-6 text-center text-slate-400 italic">
-                                                                        No se han registrado pagos para este anticipo.
-                                                                    </td>
-                                                                </tr>
-                                                            ) : (
-                                                                a.pagos.map((p) => (
-                                                                    <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30">
-                                                                        <td className="px-4 py-2 font-numeric">{p.fecha}</td>
-                                                                        <td className="px-4 py-2 capitalize">{p.metodoPago}</td>
-                                                                        <td className="px-4 py-2 text-slate-500">{p.referencia || "-"}</td>
-                                                                        <td className="px-4 py-2 text-right font-bold text-green-600 font-numeric">+${p.monto.toFixed(2)}</td>
-                                                                    </tr>
-                                                                ))
-                                                            )}
-                                                        </tbody>
-                                                        {a.pagos.length > 0 && (
-                                                            <tfoot className="bg-slate-50/50 dark:bg-slate-900/50 border-t dark:border-slate-700">
-                                                                <tr>
-                                                                    <td colSpan={3} className="px-4 py-2 text-right font-medium text-slate-500 italic">Total Pagado:</td>
-                                                                    <td className="px-4 py-2 text-right font-black text-green-600 font-numeric">
-                                                                        ${a.pagos.reduce((total, p) => total + p.monto, 0).toFixed(2)}
-                                                                    </td>
-                                                                </tr>
-                                                            </tfoot>
-                                                        )}
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </Card>
-                                )
-                            })
-                        )}
+                                                                <div className="rounded-xl border dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm">
+                                                                    <table className="w-full text-sm">
+                                                                        <thead className="bg-slate-50 dark:bg-slate-900 border-b dark:border-slate-700">
+                                                                            <tr>
+                                                                                <th className="px-4 py-3 text-left font-bold text-slate-400 text-[10px] uppercase">Fecha</th>
+                                                                                <th className="px-4 py-3 text-left font-bold text-slate-400 text-[10px] uppercase">Método</th>
+                                                                                <th className="px-4 py-3 text-left font-bold text-slate-400 text-[10px] uppercase">Referencia</th>
+                                                                                <th className="px-4 py-3 text-right font-bold text-slate-400 text-[10px] uppercase">Monto</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody className="divide-y dark:divide-slate-700">
+                                                                            {a.pagos.length === 0 ? (
+                                                                                <tr>
+                                                                                    <td colSpan={4} className="px-4 py-8 text-center text-slate-400 italic">
+                                                                                        No se han registrado abonos aún.
+                                                                                    </td>
+                                                                                </tr>
+                                                                            ) : (
+                                                                                a.pagos.map((p) => (
+                                                                                    <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30">
+                                                                                        <td className="px-4 py-3 font-numeric">{p.fecha}</td>
+                                                                                        <td className="px-4 py-3 capitalize">{p.metodoPago}</td>
+                                                                                        <td className="px-4 py-3 text-slate-500">{p.referencia || "-"}</td>
+                                                                                        <td className="px-4 py-3 text-right font-black text-green-600 font-numeric tracking-tight">+${p.monto.toFixed(2)}</td>
+                                                                                    </tr>
+                                                                                ))
+                                                                            )}
+                                                                        </tbody>
+                                                                        {a.pagos.length > 0 && (
+                                                                            <tfoot className="bg-slate-50/50 dark:bg-slate-900/50 border-t dark:border-slate-700">
+                                                                                <tr>
+                                                                                    <td colSpan={3} className="px-4 py-3 text-right font-black text-slate-500 text-[10px] uppercase">Total Recaudado:</td>
+                                                                                    <td className="px-4 py-3 text-right font-black text-green-600 font-numeric text-base">
+                                                                                        ${a.pagos.reduce((total, p) => total + p.monto, 0).toFixed(2)}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tfoot>
+                                                                        )}
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        )
+                                    })
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </CardContent>
             </Card>

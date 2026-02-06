@@ -9,9 +9,9 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faTruck } from "@fortawesome/free-solid-svg-icons";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import kipu01 from "@/assets/kipu01.png";
+import kipu01 from "@/assets/medusaconta.png";
 import { usePermisos } from "@/components/admin/permisos/permisos";
-import { faUsersGear } from "@fortawesome/free-solid-svg-icons";
+import { faUsersGear, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Union type que define todas las secciones navegables de la aplicación.
@@ -79,15 +79,26 @@ export function Navbar({
           Reportes
         </Button>
         {esAdmin && (
-          <Button
-            variant="outline"
-            className="w-full justify-start text-base text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-900/50 dark:hover:bg-indigo-900/20"
-            onClick={() => onNavigate("permisos")}
-            data-active={active === "permisos"}
-          >
-            <FontAwesomeIcon icon={faUsersGear} />
-            Administrar Empleados
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-base text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:border-indigo-900/50 dark:hover:bg-indigo-900/20"
+              onClick={() => onNavigate("permisos")}
+              data-active={active === "permisos"}
+            >
+              <FontAwesomeIcon icon={faUsersGear} />
+              Administrar Empleados
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-base text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-900/50 dark:hover:bg-blue-900/20"
+              onClick={() => onNavigate("configuracion")}
+              data-active={active === "configuracion"}
+            >
+              <FontAwesomeIcon icon={faShieldHalved} />
+              Panel de Control
+            </Button>
+          </>
         )}
       </nav>
 

@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Plus, Edit, Trash2, Package, DollarSign, Hash,
-  Image as ImageIcon, FileText, Printer, CheckCircle, Clock, X
+  Image as ImageIcon, FileText, Printer, CheckCircle, Clock, X,
+  Search, Loader2
 } from "lucide-react"
 import { KardexInventario, type FacturaElectronica, type MovimientoKardex } from "./kardexiinventario"
 import { TablaInventario } from "./tablainventario"
@@ -36,6 +37,7 @@ export function Inventario() {
 
   // Estado para el reporte de ingresos (Admin)
   const [reporteIngresosOpen, setReporteIngresosOpen] = useState(false)
+  const [mostrarDetallesExtra, setMostrarDetallesExtra] = useState(false)
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -53,8 +55,52 @@ export function Inventario() {
     otrosIrbp: "" as string | number,
     total: "" as string | number,
     metodoPago: "efectivo" as "efectivo" | "transferencia" | "cheque",
-    pvp: "" as string | number
+    pvp: "" as string | number,
+    especificaciones: ""
   })
+
+  const [buscandoImagen, setBuscandoImagen] = useState(false)
+
+  // Opción para abrir el navegador (Google Imágenes)
+  const handleBuscarEnWeb = () => {
+    if (!formData.nombre) {
+      setFotoError("Escriba el nombre del producto primero para buscar en la web.")
+      return
+    }
+    const query = encodeURIComponent(formData.nombre.trim() + " png transparent")
+    window.open(`https://www.google.com/search?q=${query}&tbm=isch`, '_blank')
+  }
+
+  const handleSugerirImagen = async () => {
+    if (!formData.nombre) {
+      setFotoError("Escriba el nombre del producto primero para sugerir una imagen.")
+      return
+    }
+
+    setBuscandoImagen(true)
+    setFotoError(null)
+
+    try {
+      const query = encodeURIComponent(formData.nombre.trim())
+      const imageUrl = `https://loremflickr.com/640/480/${query}`
+
+      const response = await fetch(imageUrl)
+      if (!response.ok) throw new Error("No se pudo conectar con el servicio")
+      const blob = await response.blob()
+
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, foto: reader.result as string }))
+        setBuscandoImagen(false)
+      }
+      reader.readAsDataURL(blob)
+
+    } catch (error) {
+      console.error("Error al buscar imagen:", error)
+      setFotoError("No pudimos traer una imagen automática. Prueba el botón 'Buscar en la Web'.")
+      setBuscandoImagen(false)
+    }
+  }
 
   const productosFiltrados = buscarProductos(busqueda)
 
@@ -107,7 +153,8 @@ export function Inventario() {
       totalIva: Number(formData.totalIva) || 0,
       otrosIrbp: Number(formData.otrosIrbp) || 0,
       total: Number(formData.total) || 0,
-      pvp: Number(formData.pvp) || 0
+      pvp: Number(formData.pvp) || 0,
+      especificaciones: formData.especificaciones
     }
     if (productoEditando) {
       actualizarProducto(productoEditando.id, dataToSubmit)
@@ -132,7 +179,8 @@ export function Inventario() {
       otrosIrbp: "",
       total: "",
       metodoPago: "efectivo",
-      pvp: ""
+      pvp: "",
+      especificaciones: ""
     })
     setMostrarFormulario(false)
   }
@@ -156,7 +204,8 @@ export function Inventario() {
       otrosIrbp: producto.otrosIrbp || "",
       total: producto.total || "",
       metodoPago: (producto.metodoPago as "efectivo" | "transferencia" | "cheque") || "efectivo",
-      pvp: producto.pvp || ""
+      pvp: producto.pvp || "",
+      especificaciones: producto.especificaciones || ""
     })
     setMostrarFormulario(true)
   }
@@ -181,7 +230,8 @@ export function Inventario() {
       otrosIrbp: "",
       total: "",
       metodoPago: "efectivo",
-      pvp: ""
+      pvp: "",
+      especificaciones: ""
     })
   }
 
@@ -355,256 +405,183 @@ export function Inventario() {
 
         {/* Formulario de producto */}
         {mostrarFormulario && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>{productoEditando ? "Editar Producto" : "Nuevo Producto"}</CardTitle>
+          <Card className="mb-6 max-w-3xl mx-auto shadow-2xl border-none overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+            <div className="h-1.5 bg-blue-600" />
+            <CardHeader className="py-3 px-6 bg-slate-50 dark:bg-slate-800/50 border-b dark:border-slate-700">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-black flex items-center gap-2 text-slate-700 dark:text-slate-200">
+                  {productoEditando ? <Edit className="w-4 h-4 text-blue-600" /> : <Plus className="w-4 h-4 text-blue-600" />}
+                  {productoEditando ? "Editando Producto" : "Nuevo Producto"}
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant={mostrarDetallesExtra ? "secondary" : "ghost"}
+                    size="sm"
+                    className={`h-8 w-8 p-0 ${mostrarDetallesExtra ? 'bg-blue-100 text-blue-600' : 'text-slate-400'}`}
+                    onClick={() => setMostrarDetallesExtra(!mostrarDetallesExtra)}
+                    title="Cálculos Contables / IVA"
+                  >
+                    <FileText className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCancelar}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Nombre</label>
+            <CardContent className="p-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Grid Compacto de Datos Primarios */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-3">
+                  <div className="md:col-span-3">
+                    <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Nombre del Artículo</label>
                     <Input
-                      type="text"
+                      placeholder="Nombre descriptivo"
                       value={formData.nombre}
                       onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                       required
+                      className="h-9 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Código</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Código</label>
                     <Input
-                      type="text"
+                      placeholder="SKU"
                       value={formData.codigo}
                       onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
                       required
+                      className="h-9 text-sm font-mono"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Cantidad</label>
+
+                  <div className="md:col-span-1">
+                    <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Stock</label>
                     <Input
                       type="number"
                       value={formData.cantidad}
                       onChange={(e) => setFormData({ ...formData, cantidad: e.target.value })}
-                      min="0"
                       required
-                      className="font-numeric"
+                      className="h-9 text-sm font-numeric"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Precio Costo</label>
+                    <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Costo ($)</label>
                     <Input
                       type="number"
                       step="0.01"
                       value={formData.precio}
                       onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-                      min="0"
                       required
-                      className="font-numeric"
+                      className="h-9 text-sm font-numeric"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">PVP (Normal)</label>
+                  <div className="md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">PVP Venta ($)</label>
                     <Input
                       type="number"
                       step="0.01"
                       value={formData.pvp}
                       onChange={(e) => setFormData({ ...formData, pvp: e.target.value })}
-                      min="0"
-                      className="font-numeric"
+                      className="h-9 text-sm font-numeric font-bold text-blue-600 bg-blue-50/50 dark:bg-blue-900/10 border-blue-100"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Subtotal</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.subtotal}
-                      onChange={(e) => setFormData({ ...formData, subtotal: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Descuento</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.descuento}
-                      onChange={(e) => setFormData({ ...formData, descuento: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Sub IVA 0%</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.subIva0}
-                      onChange={(e) => setFormData({ ...formData, subIva0: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Sub IVA 5%</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.subIva5}
-                      onChange={(e) => setFormData({ ...formData, subIva5: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Sub IVA 15%</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.subIva15}
-                      onChange={(e) => setFormData({ ...formData, subIva15: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Total IVAs</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.totalIva}
-                      onChange={(e) => setFormData({ ...formData, totalIva: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Otros/IRBP</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.otrosIrbp}
-                      onChange={(e) => setFormData({ ...formData, otrosIrbp: e.target.value })}
-                      className="font-numeric"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Total</label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={formData.total}
-                      onChange={(e) => setFormData({ ...formData, total: e.target.value })}
-                      className="font-numeric font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Método de Pago</label>
-                    <select
-                      value={formData.metodoPago}
-                      onChange={(e) => setFormData({ ...formData, metodoPago: e.target.value as any })}
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                    >
-                      <option value="efectivo">Efectivo</option>
-                      <option value="transferencia">Transferencia</option>
-                      <option value="cheque">Cheque</option>
-                    </select>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Descripción</label>
-                  <Input
-                    type="text"
-                    value={formData.descripcion}
-                    onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium">Imagen del producto</label>
-                  <input
-                    ref={inputFotoRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
+
+                {/* Sección Contable que Solo Aparece si se requiere (Icono presionado) */}
+                {mostrarDetallesExtra && (
+                  <div className="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-lg border border-slate-100 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="col-span-2 md:col-span-1">
+                      <label className="text-[9px] font-black text-slate-400 uppercase">Total Compra</label>
+                      <Input type="number" step="0.01" value={formData.total} onChange={(e) => setFormData({ ...formData, total: e.target.value })} className="h-8 text-xs font-bold" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-black text-slate-400 uppercase">IVA 15%</label>
+                      <Input type="number" step="0.01" value={formData.subIva15} onChange={(e) => setFormData({ ...formData, subIva15: e.target.value })} className="h-8 text-xs font-numeric" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-black text-slate-400 uppercase">IVA 0%</label>
+                      <Input type="number" step="0.01" value={formData.subIva0} onChange={(e) => setFormData({ ...formData, subIva0: e.target.value })} className="h-8 text-xs font-numeric" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-black text-slate-400 uppercase">Pago</label>
+                      <select value={formData.metodoPago} onChange={(e) => setFormData({ ...formData, metodoPago: e.target.value as any })} className="w-full h-8 px-1.5 rounded-md border border-input bg-background text-[11px]">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="transferencia">Transf.</option>
+                        <option value="cheque">Cheque</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* Descripción e Imagen lado a lado */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Descripción / Detalles</label>
+                      <Input
+                        placeholder="Descripción rápida..."
+                        value={formData.descripcion}
+                        onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase text-slate-400 mb-1 block">Especificaciones Técnicas / Extras</label>
+                      <Input
+                        placeholder="Color, marca, dimensiones, etc."
+                        value={formData.especificaciones}
+                        onChange={(e) => setFormData({ ...formData, especificaciones: e.target.value })}
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="submit" className="flex-1 h-10 font-bold bg-blue-600 hover:bg-blue-700">
+                        {productoEditando ? "Actualizar Producto" : "Guardar Producto"}
+                      </Button>
+                      <Button type="button" variant="outline" className="h-10 text-slate-500" onClick={handleCancelar}>
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="border border-slate-100 dark:border-slate-800 rounded-lg p-3 bg-slate-50/50 dark:bg-slate-900/20">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-[10px] font-bold uppercase text-slate-400 flex items-center gap-1">
+                        <ImageIcon className="w-3 h-3" /> Imagen
+                      </label>
+                      <div className="flex gap-1">
+                        <Button type="button" variant="ghost" className="h-6 px-2 text-[10px] text-blue-600" onClick={handleSugerirImagen} disabled={buscandoImagen}>
+                          {buscandoImagen ? "..." : "Sugerir IA"}
+                        </Button>
+                        <Button type="button" variant="ghost" className="h-6 px-2 text-[10px] text-slate-500" onClick={handleBuscarEnWeb}>
+                          Web
+                        </Button>
+                      </div>
+                    </div>
+
+                    {!formData.foto ? (
+                      <div
+                        onClick={abrirSelectorDeImagen}
+                        className="h-16 border border-dashed border-slate-300 dark:border-slate-700 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 text-slate-400" />
+                        <span className="text-[9px] text-slate-400 uppercase font-bold">Cargar</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <img src={formData.foto} alt="Preview" className="h-16 w-16 object-cover rounded-md border" />
+                        <Button type="button" variant="ghost" size="sm" className="text-red-500 text-[10px] h-6" onClick={() => setFormData(prev => ({ ...prev, foto: "" }))}>
+                          Quitar
+                        </Button>
+                      </div>
+                    )}
+                    <input ref={inputFotoRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
                       const file = e.target.files?.[0]
                       cargarImagenDesdeArchivo(file)
                       e.currentTarget.value = ""
-                    }}
-                  />
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={abrirSelectorDeImagen}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault()
-                        abrirSelectorDeImagen()
-                      }
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault()
-                      setArrastrandoImagen(true)
-                    }}
-                    onDragLeave={() => setArrastrandoImagen(false)}
-                    onDrop={(e) => {
-                      e.preventDefault()
-                      setArrastrandoImagen(false)
-                      const file = e.dataTransfer.files?.[0]
-                      cargarImagenDesdeArchivo(file)
-                    }}
-                    className={[
-                      "w-full rounded-md border border-dashed p-4 transition-colors",
-                      "bg-background",
-                      arrastrandoImagen ? "border-primary" : "border-input",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    ].join(" ")}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="grid h-10 w-10 place-items-center rounded-md border border-input bg-muted">
-                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          Arrastra y suelta una imagen aquí o presiona para elegir
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Compatible en móvil y PC (JPG, PNG, WEBP)
-                        </p>
-                      </div>
-                      <Button type="button" variant="outline" className="gap-2" onClick={abrirSelectorDeImagen}>
-                        <ImageIcon className="h-4 w-4" />
-                        Cargar imagen
-                      </Button>
-                    </div>
+                    }} />
                   </div>
-
-                  {fotoError && <p className="text-sm text-red-600">{fotoError}</p>}
-
-                  {formData.foto && (
-                    <div className="flex items-start gap-3 rounded-md border border-input p-3">
-                      <img
-                        src={formData.foto}
-                        alt="Vista previa"
-                        className="h-20 w-20 rounded-md object-cover"
-                      />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Vista previa</p>
-                        <p className="text-xs text-muted-foreground">La imagen se guardará con el producto</p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setFormData((prev) => ({ ...prev, foto: "" }))}
-                      >
-                        Quitar
-                      </Button>
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button type="submit">
-                    {productoEditando ? "Actualizar" : "Guardar"}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={handleCancelar}>
-                    Cancelar
-                  </Button>
                 </div>
               </form>
             </CardContent>
@@ -675,6 +652,15 @@ export function Inventario() {
                     {producto.descripcion}
                   </p>
                 )}
+
+                {producto.especificaciones && (
+                  <div className="mt-3 pt-3 border-t dark:border-slate-800">
+                    <p className="text-[10px] font-bold uppercase text-slate-400 mb-1">Especificaciones</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 italic">
+                      {producto.especificaciones}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -700,6 +686,7 @@ export function Inventario() {
           onEliminar={eliminarProducto}
         />
       </div>
+
       {importOpen && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/30">
           <div className="w-full max-w-xl rounded-lg border bg-white dark:bg-slate-800 dark:border-slate-700 p-6 shadow-xl">

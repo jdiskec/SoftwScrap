@@ -25,6 +25,7 @@ export interface Producto {
   total?: number // Total acumulado (precio con IVA * cantidad)
   metodoPago?: "efectivo" | "transferencia" | "cheque"
   pvp?: number // Precio de Venta al Público sugerido
+  especificaciones?: string // Especificaciones técnicas detalladas
 }
 
 /**

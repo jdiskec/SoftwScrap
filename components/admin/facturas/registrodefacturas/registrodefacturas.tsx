@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Factura, getFacturas } from "@/components/funciones/funciones";
-import { FileText, Calendar } from "lucide-react";
+import { FileText, Calendar, Download } from "lucide-react";
+import { descargarFactura } from "../facturafuncdescar";
 
 /**
  * Componente que muestra el historial de facturas emitidas.
@@ -40,10 +41,19 @@ export function RegistroDeFacturas() {
                   </div>
                 </div>
               </div>
-              {/* Resumen monetario de la factura */}
-              <div className="text-right">
-                <p className="text-slate-900 dark:text-slate-100 font-bold text-lg font-numeric">${factura.total.toFixed(2)}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{factura.detalles.length} items registrados</p>
+              {/* Resumen monetario y acción de descarga */}
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-slate-900 dark:text-slate-100 font-bold text-lg font-numeric">${factura.total.toFixed(2)}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{factura.detalles.length} items registrados</p>
+                </div>
+                <button
+                  onClick={() => descargarFactura(factura)}
+                  className="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-100 hover:text-emerald-600 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400 transition-colors tooltip"
+                  title="Descargar Factura"
+                >
+                  <Download className="w-5 h-5" />
+                </button>
               </div>
             </div>
           ))}

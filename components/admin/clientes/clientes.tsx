@@ -23,6 +23,9 @@ export function Clientes() {
     /** Almacena un objeto de cliente cuando se entra en modo edición */
     const [clienteEditando, setClienteEditando] = useState<Cliente | null>(null)
 
+    /** Almacena la búsqueda de anticipo para filtrado automático */
+    const [busquedaAnticipo, setBusquedaAnticipo] = useState("")
+
     /**
      * Refresca la lista de clientes desde LocalStorage.
      */
@@ -148,6 +151,10 @@ export function Clientes() {
                             clientes={clientes}
                             onEditar={handleEditar}
                             onEliminar={handleEliminar}
+                            onVerEstado={(id) => {
+                                setBusquedaAnticipo(id)
+                                setVistaActual("anticipos")
+                            }}
                         />
                     </div>
                 )}
@@ -170,12 +177,15 @@ export function Clientes() {
                         <div className="flex justify-end mb-6">
                             <Button
                                 className="bg-purple-600 hover:bg-purple-700 gap-2 font-bold"
-                                onClick={() => setVistaActual("nuevo_anticipo")}
+                                onClick={() => {
+                                    setBusquedaAnticipo("")
+                                    setVistaActual("nuevo_anticipo")
+                                }}
                             >
                                 <Plus className="w-5 h-5" /> Nuevo Anticipo
                             </Button>
                         </div>
-                        <VerAnticipo />
+                        <VerAnticipo initialBusqueda={busquedaAnticipo} />
                     </div>
                 )}
 

@@ -14,6 +14,7 @@ import Proveedores from "@/components/admin/proveedores/proveedores"
 import Reportes from "@/components/admin/reportes/reportes"
 import { RecuperarAcc } from "@/components/register/recuperaracc"
 import { PanelDePermisosUI } from "@/components/admin/paneldepermisos/paneldepermisos"
+import { ConfiguracionPanel } from "@/components/configuracion/configuracion"
 
 /**
  * Componente Raíz (Root Page) de la Aplicación.
@@ -108,9 +109,8 @@ export default function Home() {
       )}
 
       {view === "configuracion" && (
-        <main className="ml-[260px] min-h-screen p-8 bg-slate-50 dark:bg-slate-900">
-          <h1 className="text-2xl font-bold dark:text-white">Configuración del Sistema</h1>
-          <p className="text-slate-500 mt-2">Próximamente: Ajustes generales y de red.</p>
+        <main className="ml-[260px] min-h-screen p-8 bg-slate-100 dark:bg-slate-900">
+          <ConfiguracionPanel />
         </main>
       )}
 

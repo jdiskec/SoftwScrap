@@ -49,6 +49,7 @@ export type DetalleFactura = {
  */
 export type Anticipo = {
   id: string;
+  secuencial: string; // Número correlativo para seguimiento
   clienteId: string; // Identificación del cliente
   fecha: string;
   descripcion: string;
@@ -209,6 +210,23 @@ export function saveAnticipo(anticipo: Anticipo) {
   }
 
   localStorage.setItem(ANTICIPOS_KEY, JSON.stringify(anticipos));
+}
+
+/**
+ * Genera el siguiente número secuencial para un anticipo.
+ */
+export function getNextAnticipoSecuencial(): string {
+  const anticipos = getAnticipos();
+  if (anticipos.length === 0) return "ANT-000001";
+
+  // Extraer números y encontrar el máximo
+  const numeros = anticipos.map(a => {
+    const match = a.secuencial.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  });
+
+  const max = Math.max(...numeros);
+  return `ANT-${String(max + 1).padStart(6, '0')}`;
 }
 
 /**
