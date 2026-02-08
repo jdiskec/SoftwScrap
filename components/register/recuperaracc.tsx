@@ -40,9 +40,9 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                     <CardHeader className="space-y-1">
                         <button
                             onClick={onGoLogin}
-                            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm mb-4 w-fit group"
+                            className="flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-4 w-fit group"
                         >
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeft className="w-4 h-4" />
                             Volver al inicio
                         </button>
                         <CardTitle className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400 text-center">
@@ -75,10 +75,10 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                                     <Button
                                         variant="outline"
                                         disabled={isSending}
-                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-purple-600/20 hover:border-purple-500 group transition-all"
+                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-purple-600/20 hover:border-purple-500 group"
                                         onClick={() => handleSendReset("email")}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                        <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mr-4">
                                             <Mail className="w-5 h-5 text-blue-400" />
                                         </div>
                                         <div className="text-left">
@@ -90,10 +90,10 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                                     <Button
                                         variant="outline"
                                         disabled={isSending}
-                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-green-600/20 hover:border-green-500 group transition-all"
+                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-green-600/20 hover:border-green-500 group"
                                         onClick={() => handleSendReset("whatsapp")}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                        <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mr-4">
                                             <MessageSquare className="w-5 h-5 text-green-400" />
                                         </div>
                                         <div className="text-left">
@@ -105,10 +105,10 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                                     <Button
                                         variant="outline"
                                         disabled={isSending}
-                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-blue-600/20 hover:border-blue-500 group transition-all"
+                                        className="h-14 justify-start border-slate-700 bg-slate-900/40 hover:bg-blue-600/20 hover:border-blue-500 group"
                                         onClick={() => handleSendReset("sms")}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                        <div className="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center mr-4">
                                             <Phone className="w-5 h-5 text-cyan-400" />
                                         </div>
                                         <div className="text-left">
@@ -119,7 +119,7 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="py-6 flex flex-col items-center text-center animate-in zoom-in duration-500">
+                            <div className="py-6 flex flex-col items-center text-center">
                                 <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
                                     <ShieldCheck className="w-10 h-10 text-green-400" />
                                 </div>
@@ -140,7 +140,7 @@ export function RecuperarAcc({ onGoLogin }: RecuperarAccProps) {
                                 </Button>
                                 <button
                                     onClick={() => setStep(1)}
-                                    className="mt-4 text-xs text-slate-500 hover:text-slate-300 transition-colors underline"
+                                    className="mt-4 text-xs text-slate-500 hover:text-slate-300 underline"
                                 >
                                     ¿No recibiste nada? Intentar otro método
                                 </button>

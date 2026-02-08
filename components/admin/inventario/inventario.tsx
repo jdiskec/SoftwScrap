@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Plus, Edit, Trash2, Package, DollarSign, Hash,
   Image as ImageIcon, FileText, Printer, CheckCircle, Clock, X,
-  Search, Loader2
+  Search, Loader2, Box, Tag, Cpu, Zap, Laptop, Monitor,
+  Smartphone, Headphones, Mic, Camera, Watch, Tv, HardDrive, Speaker
 } from "lucide-react"
 import { KardexInventario, type FacturaElectronica, type MovimientoKardex } from "./kardexiinventario"
 import { TablaInventario } from "./tablainventario"
@@ -38,6 +39,12 @@ export function Inventario() {
   // Estado para el reporte de ingresos (Admin)
   const [reporteIngresosOpen, setReporteIngresosOpen] = useState(false)
   const [mostrarDetallesExtra, setMostrarDetallesExtra] = useState(false)
+  const [mostrarPreviewImagen, setMostrarPreviewImagen] = useState(false)
+  const [fotosVisibles, setFotosVisibles] = useState<Record<string, boolean>>({})
+
+  const toggleVerFoto = (id: string) => {
+    setFotosVisibles(prev => ({ ...prev, [id]: !prev[id] }))
+  }
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -548,34 +555,108 @@ export function Inventario() {
                   <div className="border border-slate-100 dark:border-slate-800 rounded-lg p-3 bg-slate-50/50 dark:bg-slate-900/20">
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-[10px] font-bold uppercase text-slate-400 flex items-center gap-1">
-                        <ImageIcon className="w-3 h-3" /> Imagen
+                        <ImageIcon className="w-3 h-3" /> Multimedia / Estado
                       </label>
-                      <div className="flex gap-1">
-                        <Button type="button" variant="ghost" className="h-6 px-2 text-[10px] text-blue-600" onClick={handleSugerirImagen} disabled={buscandoImagen}>
-                          {buscandoImagen ? "..." : "Sugerir IA"}
+                      <div className="flex gap-1.5 text-slate-300 dark:text-slate-700">
+                        <Box className="w-3 h-3" />
+                        <Tag className="w-3 h-3" />
+                        <Cpu className="w-3 h-3" />
+                        <Laptop className="w-3 h-3" />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 items-center mb-3">
+                      <Button
+                        type="button"
+                        variant={mostrarPreviewImagen ? "secondary" : "outline"}
+                        className={`h-8 text-[11px] px-3 gap-2 ${mostrarPreviewImagen ? 'bg-blue-600 text-white hover:bg-blue-700' : ''}`}
+                        onClick={() => setMostrarPreviewImagen(!mostrarPreviewImagen)}
+                      >
+                        <ImageIcon className="w-3.5 h-3.5" />
+                        {mostrarPreviewImagen ? "Ocultar Vista" : "Mostrar Imagen"}
+                      </Button>
+
+                      <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-md border border-slate-200 dark:border-slate-800">
+
+                        <div className="w-px h-3 bg-slate-200 mx-0.5" />
+                        <Button type="button" variant="ghost" className="h-6 px-1.5 text-[9px] text-slate-500" onClick={handleBuscarEnWeb} title="Buscar en Google">
+                          WEB
                         </Button>
-                        <Button type="button" variant="ghost" className="h-6 px-2 text-[10px] text-slate-500" onClick={handleBuscarEnWeb}>
-                          Web
+                        <div className="w-px h-3 bg-slate-200 mx-0.5" />
+                        <Button type="button" variant="ghost" className="h-6 px-1.5 text-[9px] text-slate-500" onClick={abrirSelectorDeImagen} title="Subir desde PC">
+                          PC
                         </Button>
                       </div>
                     </div>
 
-                    {!formData.foto ? (
-                      <div
-                        onClick={abrirSelectorDeImagen}
-                        className="h-16 border border-dashed border-slate-300 dark:border-slate-700 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-white dark:hover:bg-slate-800 transition-colors"
-                      >
-                        <Plus className="w-4 h-4 text-slate-400" />
-                        <span className="text-[9px] text-slate-400 uppercase font-bold">Cargar</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <img src={formData.foto} alt="Preview" className="h-16 w-16 object-cover rounded-md border" />
-                        <Button type="button" variant="ghost" size="sm" className="text-red-500 text-[10px] h-6" onClick={() => setFormData(prev => ({ ...prev, foto: "" }))}>
-                          Quitar
+                    <div className="flex gap-1.5 mt-2 overflow-x-auto pb-2 scrollbar-hide">
+                      {[
+                        { icon: Smartphone, url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200" },
+                        { icon: Headphones, url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200" },
+                        { icon: Laptop, url: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200" },
+                        { icon: Camera, url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200" },
+                        { icon: Watch, url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200" },
+                        { icon: Speaker, url: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=200" }
+                      ].map((item, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, foto: item.url }))
+                            setMostrarPreviewImagen(true)
+                          }}
+                          className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded bg-white dark:bg-slate-800 border dark:border-slate-700 hover:border-blue-500 hover:text-blue-500 transition-all shadow-sm"
+                          title="Cargar ejemplo"
+                        >
+                          <item.icon className="w-4 h-4" />
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Lógica de "Cargar Producto" integrada en la vista desplegable */}
+                    {mostrarPreviewImagen && (
+                      <div className="animate-in slide-in-from-top-2 fade-in duration-300 space-y-4 mt-2">
+                        <div className="relative bg-white dark:bg-slate-950 p-2 rounded-lg border-2 border-blue-100 dark:border-blue-900/30 shadow-xl group">
+                          {!formData.foto ? (
+                            <div
+                              onClick={abrirSelectorDeImagen}
+                              className="h-48 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group"
+                            >
+                              <Plus className="w-8 h-8 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                              <span className="text-[10px] text-slate-400 uppercase font-black mt-2">Cargar Archivo del Producto</span>
+                            </div>
+                          ) : (
+                            <div className="relative">
+                              <img src={formData.foto} alt="Preview" className="w-full h-64 object-contain rounded-md bg-slate-50" />
+                              <button
+                                type="button"
+                                className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-xl hover:scale-110 transition-transform z-10"
+                                onClick={() => setFormData(prev => ({ ...prev, foto: "" }))}
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Botón de acción rápida solicitado: "Cargar el producto" al oprimir mostrar imagen */}
+                        <Button
+                          type="button"
+                          onClick={handleSubmit}
+                          disabled={!formData.nombre}
+                          className="w-full h-8 text-[10px] font-black uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20"
+                        >
+                          {productoEditando ? "Confirmar Cambios" : "Cargar Producto a Inventario"}
                         </Button>
+
+                        <div className="flex justify-center gap-4 py-1">
+                          <Zap className="w-3 h-3 text-yellow-500 opacity-50" />
+                          <Monitor className="w-3 h-3 text-blue-500 opacity-50" />
+                          <Tag className="w-3 h-3 text-purple-500 opacity-50" />
+                        </div>
                       </div>
                     )}
+
                     <input ref={inputFotoRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
                       const file = e.target.files?.[0]
                       cargarImagenDesdeArchivo(file)
@@ -616,15 +697,35 @@ export function Inventario() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                {producto.foto && (
-                  <div className="mb-3">
+              <CardContent className="pt-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <Button
+                    size="sm"
+                    variant={fotosVisibles[producto.id] ? "secondary" : "outline"}
+                    className="h-8 text-[10px] gap-1.5 flex-1 font-bold uppercase"
+                    onClick={() => {
+                      toggleVerFoto(producto.id)
+                      // "Cargar el producto" al oprimir el botón (lo llevamos al formulario)
+                      handleEditar(producto)
+                    }}
+                  >
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    {fotosVisibles[producto.id] ? "Ocultar" : "Ver Imagen & Cargar"}
+                  </Button>
+                  <div className="flex gap-1 text-slate-300">
+                    <Smartphone className="w-3.5 h-3.5" />
+                    <Headphones className="w-4 h-4" />
+                  </div>
+                </div>
+
+                {fotosVisibles[producto.id] && producto.foto && (
+                  <div className="mb-4 animate-in fade-in zoom-in duration-300">
                     <img
                       src={producto.foto}
                       alt={producto.nombre}
-                      className="w-full h-32 object-cover rounded-md"
+                      className="w-full h-40 object-cover rounded-lg border-2 border-slate-100 dark:border-slate-800 shadow-md"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none'
+                        (e.target as HTMLImageElement).src = "https://via.placeholder.com/400x300?text=No+Imagen"
                       }}
                     />
                   </div>

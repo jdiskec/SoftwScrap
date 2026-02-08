@@ -58,6 +58,7 @@ export function CrearFactura() {
     // Estados locales para la funcionalidad de búsqueda de productos
     const [buscarProductoOpen, setBuscarProductoOpen] = useState(false);
     const [terminoBusquedaDetalle, setTerminoBusquedaDetalle] = useState("");
+    const [fotoPreviewUrl, setFotoPreviewUrl] = useState<string | null>(null);
 
     // Lista filtrada de productos basada en el término de búsqueda
     const productosInventario = buscarProductos(terminoBusquedaDetalle);
@@ -441,22 +442,29 @@ export function CrearFactura() {
                                                     setTerminoBusquedaDetalle("");
                                                 }}
                                             >
-                                                <div className="flex gap-3 mb-3">
-                                                    {prod.foto ? (
-                                                        <img
-                                                            src={prod.foto}
-                                                            alt={prod.nombre}
-                                                            className="w-16 h-16 rounded-lg object-cover bg-slate-100 dark:bg-slate-800"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-16 h-16 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                                                            <ImageIcon className="w-8 h-8" />
-                                                        </div>
-                                                    )}
+                                                <div className="flex gap-3 mb-3 items-center">
+                                                    <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
+                                                        <Package className="w-6 h-6" />
+                                                    </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="font-bold text-slate-900 dark:text-slate-100 truncate">{prod.nombre}</p>
-                                                        <p className="text-xs text-blue-600 font-mono">{prod.codigo}</p>
-                                                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{prod.descripcion || 'Sin descripción'}</p>
+                                                        <p className="font-bold text-slate-900 dark:text-slate-100 truncate text-sm">{prod.nombre}</p>
+                                                        <p className="text-[10px] text-blue-600 font-mono">{prod.codigo}</p>
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        {prod.foto && (
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-7 text-[10px] gap-1 text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setFotoPreviewUrl(prod.foto || null);
+                                                                }}
+                                                            >
+                                                                <ImageIcon className="w-3 h-3" /> Ver Imagen
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-slate-800">
@@ -470,6 +478,39 @@ export function CrearFactura() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de Previsualización de Imagen del Catálogo */}
+            {fotoPreviewUrl && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-in fade-in duration-200">
+                    <div className="relative bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-2xl max-w-lg w-full group">
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute -top-3 -right-3 rounded-full shadow-lg z-10"
+                            onClick={() => setFotoPreviewUrl(null)}
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
+                        <div className="overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-950">
+                            <img
+                                src={fotoPreviewUrl}
+                                alt="Vista previa del artículo"
+                                className="w-full h-auto max-h-[70vh] object-contain mx-auto transition-transform duration-500 group-hover:scale-105"
+                            />
+                        </div>
+                        <div className="p-4 text-center">
+                            <p className="text-xs text-slate-500 font-medium">Vista previa de alta resolución</p>
+                            <Button
+                                variant="ghost"
+                                className="mt-2 text-blue-600 hover:text-blue-700"
+                                onClick={() => setFotoPreviewUrl(null)}
+                            >
+                                Salir de la vista
+                            </Button>
                         </div>
                     </div>
                 </div>

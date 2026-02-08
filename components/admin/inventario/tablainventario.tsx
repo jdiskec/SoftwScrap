@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 
 import { Producto } from "./funcioninventario"
 import {
@@ -10,7 +11,7 @@ import {
     TableRow,
 } from "../../ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Edit, Trash2, ShieldAlert } from "lucide-react"
+import { Edit, Trash2, ShieldAlert, Image as ImageIcon, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { usePermisos } from "../permisos/permisos"
 import {
@@ -36,6 +37,7 @@ interface TablaInventarioProps {
 export function TablaInventario({ productos, onEditar, onEliminar }: TablaInventarioProps) {
     const IVA_VALOR = 0.15
     const { tienePermiso } = usePermisos()
+    const [fotoPreviewUrl, setFotoPreviewUrl] = useState<string | null>(null)
 
     // Verificación de seguridad: solo permitimos modificar si tiene el permiso adecuado
     const puedeModificar = tienePermiso("modificar_inventario")
@@ -83,8 +85,21 @@ export function TablaInventario({ productos, onEditar, onEliminar }: TablaInvent
                                             <TableCell className="font-numeric text-blue-600 dark:text-blue-400">{producto.codigo}</TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
-                                                    <span className="font-semibold">{producto.nombre}</span>
-                                                    <span className="text-xs text-muted-foreground line-clamp-1">{producto.descripcion || "Sin descripción"}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-semibold text-slate-900 dark:text-slate-100">{producto.nombre}</span>
+                                                        {producto.foto && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-6 w-6 p-0 text-blue-600 hover:bg-blue-50"
+                                                                onClick={() => setFotoPreviewUrl(producto.foto || null)}
+                                                                title="Ver imagen"
+                                                            >
+                                                                <ImageIcon className="h-3.5 w-3.5" />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs text-muted-foreground line-clamp-1 italic">{producto.descripcion || "Sin descripción"}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right">
@@ -170,6 +185,40 @@ export function TablaInventario({ productos, onEditar, onEliminar }: TablaInvent
                     </Table>
                 </div>
             </CardContent>
+
+            {/* Modal de Previsualización de Imagen del Inventario */}
+            {fotoPreviewUrl && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="relative bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-2xl max-w-lg w-full">
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute -top-3 -right-3 rounded-full shadow-lg z-10"
+                            onClick={() => setFotoPreviewUrl(null)}
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
+                        <div className="overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-950">
+                            <img
+                                src={fotoPreviewUrl}
+                                alt="Vista previa del artículo"
+                                className="w-full h-auto max-h-[60vh] object-contain mx-auto"
+                            />
+                        </div>
+                        <div className="p-3 text-center border-t dark:border-slate-800 mt-2">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Vista de Alta Resolución</p>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="mt-1 text-slate-500 hover:text-red-500"
+                                onClick={() => setFotoPreviewUrl(null)}
+                            >
+                                Cerrar Visualizador
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Card>
     )
 }

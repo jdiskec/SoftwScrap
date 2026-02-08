@@ -76,7 +76,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
     <JellyfishBackground>
       {/* Selector de Cuentas de Google (Simulado) */}
       {showGoogleSelector && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-slate-950 sm:bg-black/40 sm:backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-slate-950 sm:bg-black/40 sm:backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 w-full h-full sm:h-auto sm:max-w-[400px] sm:rounded-lg shadow-2xl flex flex-col p-8 sm:p-10 border border-slate-200 dark:border-slate-800">
             <div className="flex justify-center mb-6">
               <svg className="w-8 h-8" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
           </CardHeader>
           <CardContent>
             {errorLocal && (
-              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-medium animate-in fade-in zoom-in duration-200">
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-medium">
                 ⚠️ {errorLocal}
               </div>
             )}
@@ -145,7 +145,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
               <button
                 type="button"
                 onClick={() => { setActiveTab("usuario"); setErrorLocal(""); }}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${activeTab === "usuario"
+                className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg ${activeTab === "usuario"
                   ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                   }`}
@@ -155,7 +155,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
               <button
                 type="button"
                 onClick={() => { setActiveTab("empresa"); setErrorLocal(""); }}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all ${activeTab === "empresa"
+                className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg ${activeTab === "empresa"
                   ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                   }`}
@@ -218,7 +218,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
                   Completar Registro
                 </Button>
                 <div className="flex justify-center border-t border-slate-700/50 pt-4">
-                  <Button variant="link" onClick={onGoLogin} className="text-purple-400 hover:text-purple-300 transition-colors">
+                  <Button variant="link" onClick={onGoLogin} className="text-purple-400 hover:text-purple-300">
                     ¿Ya tienes una cuenta? Inicia sesión
                   </Button>
                 </div>
@@ -281,7 +281,7 @@ export function Register({ onGoLogin, onLoginSuccess }: { onGoLogin: () => void,
             <div className="mt-6 grid grid-cols-1 gap-3">
               <Button
                 variant="outline"
-                className="w-full h-11 border-slate-700 bg-slate-900/30 text-slate-300 hover:bg-slate-800 hover:text-white transition-all gap-3"
+                className="w-full h-11 border-slate-700 bg-slate-900/30 text-slate-300 hover:bg-slate-800 hover:text-white gap-3"
                 onClick={() => setShowGoogleSelector(true)}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">

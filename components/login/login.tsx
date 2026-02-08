@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label"
 
 import { JellyfishBackground } from "@/components/background/background"
 
+import { usePermisos } from "@/components/admin/permisos/permisos"
+
 /** 
  * Propiedades del componente de inicio de sesión. 
  */
@@ -40,16 +42,22 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
     setTimeout(onLoginSuccess, 1000)
   }
 
+  const { login } = usePermisos()
+
   /**
    * Ejecuta la lógica de validación de credenciales.
    */
   const handleLogin = () => {
-    // Simulación de autenticación (Credenciales de prueba)
-    if (email === "admin@test.com" && password === "password") {
+    // Intentamos loguear con el email/usuario ingresado
+    // Nota: En este sistema simplificado, no validamos contraseña por ahora 
+    // pero aceptamos 'password' para mantener la compatibilidad con el demo.
+    const success = login(email)
+
+    if (success && (password === "password" || password === "admin")) {
       setError("")
       onLoginSuccess()
     } else {
-      setError("Correo o contraseña incorrectos")
+      setError("Usuario o contraseña incorrectos. Pruebe con 'admin@test.com' y contraseña 'password'")
     }
   }
 
@@ -57,7 +65,7 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
     <JellyfishBackground>
       {/* Selector de Cuentas de Google (Simulado) */}
       {showGoogleSelector && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-slate-950 sm:bg-black/40 sm:backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-slate-950 sm:bg-black/40 sm:backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 w-full h-full sm:h-auto sm:max-w-[400px] sm:rounded-lg shadow-2xl flex flex-col p-8 sm:p-10 border border-slate-200 dark:border-slate-800">
             <div className="flex justify-center mb-6">
               <svg className="w-8 h-8" viewBox="0 0 24 24">
@@ -128,9 +136,9 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
                 <Label htmlFor="email" className="text-slate-300">Correo Electrónico</Label>
                 <Input
                   id="email"
-                  type="email"
-                  className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-600 focus:ring-purple-500 focus:border-purple-500 transition-all"
-                  placeholder="admin@test.com"
+                  type="text"
+                  className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-600 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder="admin o admin@test.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -151,7 +159,7 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-600 focus:ring-purple-500 focus:border-purple-500 transition-all pr-10"
+                    className="bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-600 focus:ring-purple-500 focus:border-purple-500 pr-10"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -175,7 +183,7 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
               <div className="space-y-3">
                 <Button
                   onClick={handleLogin}
-                  className="w-full h-11 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg shadow-purple-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-11 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg shadow-purple-600/20"
                 >
                   Entrar al Sistema
                 </Button>
@@ -190,7 +198,7 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
                 <Button
                   variant="outline"
                   onClick={onGoRegister}
-                  className="w-full h-11 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white transition-all"
+                  className="w-full h-11 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800 hover:text-white"
                 >
                   Crear una nueva cuenta
                 </Button>
@@ -206,7 +214,7 @@ export function Login({ onLoginSuccess, onGoRegister, onGoRecover }: LoginProps)
               <div className="grid grid-cols-1 gap-3">
                 <Button
                   variant="outline"
-                  className="w-full h-11 border-slate-700 bg-slate-900/30 text-slate-300 hover:bg-slate-800 hover:text-white transition-all gap-3"
+                  className="w-full h-11 border-slate-700 bg-slate-900/30 text-slate-300 hover:bg-slate-800 hover:text-white gap-3"
                   onClick={() => setShowGoogleSelector(true)}
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
