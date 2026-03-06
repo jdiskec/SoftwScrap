@@ -1,0 +1,53 @@
+﻿ function printInPopup(factura: FacturaData) {
+   const w = window.open("", "_blank", "width=800,height=900")
+   if (!w) return
+   const items = factura.detalles
+     .map(
+       (d) =>
+         `<tr><td>${d.cantidad}</td><td>${d.descripcion}</td><td style="text-align:right">$${d.precioUnitario.toFixed(
+           2
+         )}</td><td style="text-align:right">$${(d.cantidad * d.precioUnitario - d.descuento).toFixed(2)}</td></tr>`
+     )
+     .join("")
+   const html = `
+   <html>
+     <head>
+       <title>Factura ${factura.secuencial}</title>
+       <style>
+         body { font-family: Arial, sans-serif; padding: 24px; color: #0f172a; }
+         h1 { font-size: 18px; margin: 0 0 8px; }
+         h2 { font-size: 14px; margin: 16px 0 8px; }
+         table { width: 100%; border-collapse: collapse; font-size: 12px; }
+         th, td { border: 1px solid #cbd5e1; padding: 6px; }
+         th { background: #f1f5f9; text-align: left; }
+         .totales { margin-top: 12px; width: 100%; font-size: 12px; }
+         .totales tr td { padding: 4px; }
+         .right { text-align: right; }
+       </style>
+     </head>
+     <body>
+       <h1>Factura ${factura.secuencial}</h1>
+       <div>Fecha: ${factura.fecha}</div>
+       <h2>Cliente</h2>
+       <div>${factura.cliente.razonSocial} - ${factura.cliente.identificacion}</div>
+       <div>${factura.cliente.direccion}</div>
+       <h2>Detalle</h2>
+       <table>
+         <thead><tr><th>Cant.</th><th>DescripciÃ³n</th><th class="right">Precio Unit.</th><th class="right">Total</th></tr></thead>
+         <tbody>${items}</tbody>
+       </table>
+       <table class="totales">
+         <tr><td>Subtotal</td><td class="right">$${factura.subtotal.toFixed(2)}</td></tr>
+         <tr><td>Descuento</td><td class="right">-$${factura.totalDescuento.toFixed(2)}</td></tr>
+         <tr><td>Base Imponible</td><td class="right">$${factura.baseImponible.toFixed(2)}</td></tr>
+         <tr><td>IVA</td><td class="right">$${factura.valorIVA.toFixed(2)}</td></tr>
+         <tr><td><strong>Total</strong></td><td class="right"><strong>$${factura.total.toFixed(2)}</strong></td></tr>
+       </table>
+       <script>
+         window.onload = () => { window.print(); setTimeout(() => window.close(), 300); }
+       </script>
+     </body>
+   </html>`
+   w.document.write(html)
+   w.document.close()
+ }

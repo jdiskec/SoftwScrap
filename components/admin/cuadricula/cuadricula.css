@@ -1,0 +1,144 @@
+:root {
+  color-scheme: light dark;
+}
+
+.tabla-inventario {
+  margin-left: 0;
+  padding: 16px;
+}
+
+.titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.tabla-wrapper {
+  overflow: auto;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
+  background: var(--color-bg, #ffffff);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.tabla thead th {
+  text-align: left;
+  padding: 12px 10px;
+  background: color-mix(in oklab, Canvas, #eceff4 8%);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  white-space: nowrap;
+}
+
+.tabla tbody td {
+  padding: 12px 10px;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  vertical-align: middle;
+}
+
+.tabla tbody tr:hover {
+  background: color-mix(in oklab, Canvas, #f1f5f9 8%);
+}
+
+.descripcion {
+  max-width: 380px;
+  color: #64748b;
+}
+
+.cantidad-badge {
+  display: inline-block;
+  min-width: 44px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  background: color-mix(in oklab, #10b981 30%, Canvas 70%);
+  color: #064e3b;
+  border: 1px solid color-mix(in oklab, #10b981 50%, Canvas 50%);
+}
+
+.col-imagen,
+.imagen-cell {
+  text-align: right;
+  width: 96px;
+}
+
+.miniatura {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.icono {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px dashed var(--color-border, #e2e8f0);
+  color: #94a3b8;
+}
+
+.icono-img {
+  width: 20px;
+  height: 20px;
+}
+
+.vacio {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+}
+
+.dark .titulo {
+  color: #e2e8f0;
+}
+
+.dark .tabla-wrapper {
+  border-color: #334155;
+  background: #0f172a;
+}
+
+.dark .tabla thead th {
+  background: color-mix(in oklab, Canvas, #0b1220 35%);
+  border-bottom-color: #334155;
+  color: #cbd5e1;
+}
+
+.dark .tabla tbody td {
+  border-top-color: #334155;
+  color: #e2e8f0;
+}
+
+.dark .tabla tbody tr:hover {
+  background: color-mix(in oklab, #1f2937 35%, Canvas 65%);
+}
+
+.dark .descripcion {
+  color: #94a3b8;
+}
+
+.dark .cantidad-badge {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.dark .miniatura {
+  border-color: #334155;
+}
+
+.dark .icono {
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+.dark .vacio {
+  color: #94a3b8;
+}
