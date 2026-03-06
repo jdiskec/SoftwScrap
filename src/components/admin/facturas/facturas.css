@@ -1,0 +1,63 @@
+.facturas-container {
+    padding: 20px;
+}
+
+.facturas-table-container {
+    overflow-x: auto;
+    border: 1px solid var(--glass-border);
+}
+
+.facturas-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.facturas-table th {
+    padding: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.facturas-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.95rem;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge.pagada {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.status-badge.pendiente {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    margin-right: 15px;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--primary);
+}

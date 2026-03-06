@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  --primary: #00f2fe;
+  --secondary: #4facfe;
+  --bg-dark: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --font-main: 'Outfit', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-main, #0a0a0b);
+  color: var(--text-main, #ffffff);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  color: #000;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(79, 172, 254, 0.5);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}

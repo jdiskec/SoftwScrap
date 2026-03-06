@@ -1,0 +1,292 @@
+/* Estilos premium para Facturas.jsx */
+.facturas-container {
+    animation: fadeIn 0.4s ease;
+}
+
+.invoice-complex-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.form-section {
+    padding: 25px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.products-table th {
+    text-align: left;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+}
+
+.products-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.table-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 6px;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+.table-input:focus {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+    outline: none;
+}
+
+.display-total {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    margin: 10px 0;
+}
+
+.highlight-input {
+    font-size: 1.5rem;
+    padding: 15px;
+    border: 2px solid rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.02);
+}
+
+.highlight-input:focus {
+    border-color: #4ade80;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+}
+
+.totales-breakdown {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+.summary-row.total {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+/* Reporte Inteligente IA */
+.report-card.highlight {
+    border: 2px solid var(--primary);
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(79, 172, 254, 0.05) 100%);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.ai-badge {
+    background: var(--primary);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.ai-analysis {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.risk-level.medium {
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Gráfico Simulado */
+.chart-sim {
+    height: 120px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.chart-bar-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.chart-bar {
+    width: 100%;
+    background: linear-gradient(to top, var(--primary), var(--secondary));
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chart-bar:hover {
+    filter: brightness(1.2);
+}
+
+.bar-tooltip {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.chart-bar:hover .bar-tooltip {
+    opacity: 1;
+}
+
+.bar-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 5px;
+}
+
+/* Facturas Table */
+.facturas-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.facturas-table th {
+    text-align: left;
+    padding: 15px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.facturas-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.light-mode .facturas-table td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.facturas-table tr:hover {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+body.light-mode .facturas-table tr:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+/* Burbuja de Cambio Dinámica y Resistente al Tema */
+.cambio-display-bubble {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(21, 128, 61, 0.15) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.1);
+    transition: all 0.3s ease;
+}
+
+.cambio-display-bubble .icon {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.4));
+}
+
+.cambio-display-bubble .label {
+    font-size: 0.85rem;
+    color: #4ade80;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cambio-display-bubble .value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #22c55e;
+    line-height: 1;
+}
+
+/* Ajustes para Modo Claro en Facturas */
+body.light-mode .form-section {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+body.light-mode .table-input {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #1e293b;
+}
+
+body.light-mode .table-input:focus {
+    background: #fff;
+}
+
+body.light-mode .products-table th {
+    background: rgba(0, 0, 0, 0.03);
+    color: #64748b;
+}
+
+body.light-mode .summary-row {
+    color: #475569;
+}
+
+body.light-mode .totales-breakdown {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .summary-row.total {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #0f172a;
+}

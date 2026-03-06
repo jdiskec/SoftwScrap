@@ -1,0 +1,32 @@
+/* Estilos para el módulo general de Compras */
+.compras-container {
+    width: 100%;
+    animation: fadeIn 0.5s ease;
+}
+
+.sub-nav-btn {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.sub-nav-btn.active {
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+    transform: translateY(-2px);
+}
+
+.sub-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

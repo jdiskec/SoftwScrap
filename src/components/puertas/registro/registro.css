@@ -1,0 +1,74 @@
+.registro-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.registro-card {
+    width: 100%;
+    max-width: 550px;
+    padding: 40px;
+    text-align: center;
+}
+
+.registro-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.glass-input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.verification-info {
+    background: rgba(0, 242, 254, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px dashed rgba(0, 242, 254, 0.3);
+    margin: 10px 0;
+}
+
+select.glass-input {
+    cursor: pointer;
+}
+
+select.glass-input option {
+    background: #1e293b;
+    color: #fff;
+}
