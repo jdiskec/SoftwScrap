@@ -10,9 +10,14 @@ import './compras.css';
  * Actúa como contenedor principal para la gestión de compras, facturas, gastos y proveedores.
  */
 const Compras = () => {
-    const [activeSubTab, setActiveSubTab] = useState('facturas');
+    const [activeSubTab, setActiveSubTab] = useState('resumen');
+    const [recentPurchases, setRecentPurchases] = useState(() => {
+        const saved = localStorage.getItem('compras_realizadas');
+        return saved ? JSON.parse(saved).slice(0, 5) : [];
+    });
 
     const subMenuItems = [
+        { id: 'resumen', label: 'Resumen', icon: '🏠' },
         { id: 'facturas', label: 'Facturas', icon: '📝' },
         { id: 'gastos', label: 'Gastos', icon: '💸' },
         { id: 'cuentas', label: 'Cuentas por pagar', icon: '💳' },
@@ -22,6 +27,65 @@ const Compras = () => {
 
     const renderContent = () => {
         switch (activeSubTab) {
+            case 'resumen':
+                return (
+                    <div className="resumen-compras animate-fade-in">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+                            <div className="glass stat-card" style={{ padding: '20px' }}>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Total Compras Hoy</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>$ 0.00</div>
+                            </div>
+                            <div className="glass stat-card" style={{ padding: '20px' }}>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Pendientes por Pagar</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f87171' }}>$ 0.00</div>
+                            </div>
+                            <div className="glass stat-card" style={{ padding: '20px' }}>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Transacciones del Mes</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{recentPurchases.length}</div>
+                            </div>
+                        </div>
+
+                        <div className="glass" style={{ padding: '25px', borderRadius: '15px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h4 style={{ margin: 0 }}>🛍️ Compras Recientes</h4>
+                                <button
+                                    onClick={() => setActiveSubTab('facturas')}
+                                    className="btn-primary"
+                                    style={{ padding: '8px 15px', fontSize: '0.85rem' }}
+                                >
+                                    🔍 Divisar todas las compras
+                                </button>
+                            </div>
+
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-dim)' }}>
+                                        <th style={{ padding: '15px' }}>Fecha</th>
+                                        <th style={{ padding: '15px' }}>Proveedor</th>
+                                        <th style={{ padding: '15px' }}>Total</th>
+                                        <th style={{ padding: '15px' }}>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {recentPurchases.length === 0 ? (
+                                        <tr><td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: 'var(--text-dim)' }}>No hay compras registradas aún.</td></tr>
+                                    ) : (
+                                        recentPurchases.map(c => (
+                                            <tr key={c.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                                <td style={{ padding: '15px' }}>{c.fecha}</td>
+                                                <td style={{ padding: '15px' }}>{c.cliente || 'S/N'}</td>
+                                                <td style={{ padding: '15px', fontWeight: 'bold' }}>$ {c.total}</td>
+                                                <td style={{ padding: '15px' }}>
+                                                    <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '10px', background: 'rgba(74, 222, 128, 0.1)', color: '#4ade80' }}>Pagado</span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
             case 'facturas':
                 return <Facturas />;
             case 'gastos':
@@ -31,7 +95,7 @@ const Compras = () => {
             case 'categorias':
                 return <CategoriaGasto />;
             case 'proveedores':
-                // Nota: Podríamos importar el componente de proveedores aquí o uno específico para compras
+                // ...
                 return (
                     <div className="glass" style={{ padding: '40px', textAlign: 'center' }}>
                         <h3>Módulo de Proveedores</h3>

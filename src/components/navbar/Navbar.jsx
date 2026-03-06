@@ -52,8 +52,7 @@ const Navbar = () => {
                 <div style={{ display: 'flex', gap: '15px', marginLeft: '20px', alignItems: 'center' }}>
                     <DiaNoche />
                     <button className="glass" style={{ padding: '10px 25px', border: '1px solid var(--glass-border)', color: 'var(--text-main)' }} onClick={() => window.dispatchEvent(new CustomEvent('nav-login'))}>Ingresar</button>
-                    <button className="glass" style={{ padding: '10px 25px', border: '1px solid var(--secondary)', color: 'var(--secondary)' }} onClick={() => window.dispatchEvent(new CustomEvent('nav-admin-direct'))}>⚙️ Admin</button>
-                    <button className="btn-primary" style={{ padding: '10px 25px' }}>Conectar Billetera</button>
+
                 </div>
             </div>
         </nav>

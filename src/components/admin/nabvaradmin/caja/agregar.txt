@@ -1,0 +1,6 @@
+buscar mis provedores.....en el apartado de facturacion , comprobar si es venta o compra.
+
+agregar en navbar, "Dcoumentos compra- lo que ha comprado para la empresa" como tambien lo que es gasolina arriendo , pagos d permisos 
+y demas cosas que integran la compra "o documentos compra donde gaurdamos cosas normales"
+
+vamos a modificar Facturacion, en nombre o comprador vamos a introducir una lupa para buscar nombre de un cliente ya registrado el cual se almacena en clientes y al presionar la luopa esta despliga hacia abajo nombres y numero de cedula o ruc y autocompleta campos como Nombre/ Comprador, Ruc/ cedula , Direccion, Telefono , Nro Residencia he Email

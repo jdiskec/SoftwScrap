@@ -52,6 +52,9 @@ const Facturas = () => {
 
         const savedInventory = localStorage.getItem('inventory_products');
         if (savedInventory) setInventory(JSON.parse(savedInventory));
+
+        const savedCategories = localStorage.getItem('compras_categories');
+        if (savedCategories) setCategories(JSON.parse(savedCategories));
     }, []);
 
     const handleFilterChange = (e) => {
@@ -136,7 +139,9 @@ const Facturas = () => {
             fecha: formData.fecha,
             total: formData.total,
             items: items.map(i => ({ ...i, material: i.producto, peso: i.cantidad })),
-            sucursal: formData.sucursal
+            sucursal: formData.sucursal,
+            categoria: formData.categoria,
+            formaPago: formData.formaPago
         };
 
         const updatedCompras = [nuevaCompra, ...compras];
@@ -276,10 +281,20 @@ const Facturas = () => {
                             </div>
                             <div className="form-group">
                                 <label>Categoría</label>
-                                <select className="glass-input">
-                                    <option>Materia Prima</option>
-                                    <option>Suministros</option>
-                                    <option>Activos Fijos</option>
+                                <select
+                                    className="glass-input"
+                                    value={formData.categoria}
+                                    onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+                                >
+                                    {categories.length > 0 ? (
+                                        categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)
+                                    ) : (
+                                        <>
+                                            <option>Materia Prima</option>
+                                            <option>Suministros</option>
+                                            <option>Activos Fijos</option>
+                                        </>
+                                    )}
                                 </select>
                             </div>
                         </div>

@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import Facturas from './facturas/facturas';
 import DiaNoche from '../background/dianoche';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBagShopping } from "@fortawesome/free-solid-svg-icons";
+
+// Icon mapping according to requested naming
+const byPrefixAndName = {
+    fatl: {
+        'bag-shopping': faBagShopping
+    }
+};
 
 // Importación de nuevos componentes
 import AdminInventory from './nabvaradmin/inventario/AdminInventory';
+import Compras from './nabvaradmin/compras/compras';
 import Ventas from './nabvaradmin/ventas/ventas';
 import Caja from './nabvaradmin/caja/caja';
 import Proveedores from './nabvaradmin/proveedores/proveedores';
@@ -24,7 +34,12 @@ const AdminDashboard = ({ onLogout }) => {
 
     const menuItems = [
         { id: 'facturas', label: '📝 Facturación', component: <Facturas /> },
-        { id: 'inventario', label: '📦 Acopio', component: <AdminInventory /> },
+        {
+            id: 'inventario',
+            label: 'Compras',
+            icon: <FontAwesomeIcon icon={byPrefixAndName.fatl['bag-shopping']} style={{ marginRight: '10px' }} />,
+            component: <Compras />
+        },
         { id: 'ventas', label: '💰 Ventas', component: <Ventas /> },
         { id: 'caja', label: '🏦 Caja', component: <Caja /> },
         { id: 'proveedores', label: '🤝 Proveedores', component: <Proveedores /> },
@@ -63,9 +78,12 @@ const AdminDashboard = ({ onLogout }) => {
                                 border: activeTab === item.id ? '1px solid var(--primary)' : '1px solid transparent',
                                 background: activeTab === item.id ? 'rgba(0, 242, 254, 0.1)' : 'transparent',
                                 color: 'var(--text-main)', cursor: 'pointer',
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                display: 'flex',
+                                alignItems: 'center'
                             }}
                         >
+                            {item.icon}
                             {item.label}
                         </button>
                     ))}

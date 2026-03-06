@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './crearfactura.css';
+import FunctionLupa from './functionlupa';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+
+// Icon mapping to match project style
+const byPrefixAndName = {
+    fasds: {
+        'magnifying-glass': faMagnifyingGlass
+    }
+};
 
 /**
  * Componente CrearFactura
@@ -32,14 +42,19 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
     });
 
     // Estado para los items de la factura (materiales)
-    const [items, setItems] = useState([{ codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '' }]);
+    const [items, setItems] = useState([{ codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '', iva: 15 }]);
 
     // Otros datos de factura
     const [invoiceInfo, setInvoiceInfo] = useState({
         observaciones: '',
         formaPago: 'Efectivo',
         vendedor: 'Admin Central',
-        nroDocumento: `001-001-${Math.floor(Math.random() * 100000).toString().padStart(6, '0')}`
+        nroDocumento: `001-001-${Math.floor(Math.random() * 100000).toString().padStart(6, '0')}`,
+        tipoDocumento: 'Factura',
+        caja: 'Caja Principal',
+        comisionPorcentaje: 0,
+        descuentoPorcentaje: 0,
+        descuentoValor: 0
     });
 
     // Estados para control de impresión/modales
@@ -70,6 +85,17 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
 
     const handleClienteChange = (e) => {
         setCliente({ ...cliente, [e.target.name]: e.target.value });
+    };
+
+    const handleSelectCliente = (selected) => {
+        setCliente({
+            nombre: selected.name || '',
+            ruc: selected.ci || selected.ruc || '',
+            direccion: selected.direccion || '',
+            email: selected.email || '',
+            telefono: selected.phone || selected.telefono || '',
+            residencia: selected.residencia || ''
+        });
     };
 
     const handleLogoUpload = (e) => {
@@ -107,7 +133,7 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
     };
 
     const addItem = () => {
-        setItems([...items, { codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '' }]);
+        setItems([...items, { codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '', iva: 15 }]);
     };
 
     const removeItem = (index) => {
@@ -115,8 +141,50 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
         setItems(newItems);
     };
 
-    const calculateSubtotal = () => {
-        return items.reduce((acc, item) => acc + parseFloat(item.total || 0), 0).toFixed(2);
+    const calculateTotals = () => {
+        let subtotal15 = 0;
+        let subtotal0 = 0;
+
+        items.forEach(item => {
+            const val = parseFloat(item.total || 0);
+            if (parseInt(item.iva) === 15) {
+                subtotal15 += val;
+            } else {
+                subtotal0 += val;
+            }
+        });
+
+        const bruto = subtotal15 + subtotal0;
+        const comision = bruto * (parseFloat(invoiceInfo.comisionPorcentaje || 0) / 100);
+
+        // Lógica de Descuento
+        const descPct = parseFloat(invoiceInfo.descuentoPorcentaje || 0);
+        const descFixed = parseFloat(invoiceInfo.descuentoValor || 0);
+        const totalDesc = (bruto * (descPct / 100)) + descFixed;
+
+        // Distribución proporcional del descuento para reportar sub-totales con descuento
+        const ratio15 = bruto > 0 ? (subtotal15 / bruto) : 1;
+        const ratio0 = bruto > 0 ? (subtotal0 / bruto) : 0;
+
+        const desc15 = totalDesc * ratio15;
+        const desc0 = totalDesc * ratio0;
+
+        const subConDesc15 = Math.max(0, subtotal15 - desc15);
+        const subConDesc0 = Math.max(0, subtotal0 - desc0);
+
+        const iva15Val = subConDesc15 * 0.15;
+        const finalTotal = subConDesc15 + subConDesc0 + iva15Val + comision;
+
+        return {
+            sub15: subtotal15.toFixed(2),
+            sub0: subtotal0.toFixed(2),
+            comisionVal: comision.toFixed(2),
+            totalDesc: totalDesc.toFixed(2),
+            subConDesc15: subConDesc15.toFixed(2),
+            subConDesc0: subConDesc0.toFixed(2),
+            iva15: iva15Val.toFixed(2),
+            total: finalTotal.toFixed(2)
+        };
     };
 
     const handleGenerate = (e) => {
@@ -138,20 +206,23 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
     };
 
     const confirmPrint = () => {
-        const subtotal = parseFloat(calculateSubtotal());
-        const valorIva = conIVA ? subtotal * 0.15 : 0;
-        const totalFinal = subtotal + valorIva;
+        const totals = calculateTotals();
+        const totalFinal = totals.total;
 
         const nuevaFactura = {
             id: invoiceInfo.nroDocumento,
             tipo: tipoFactura,
+            tipoDocumento: invoiceInfo.tipoDocumento,
+            caja: invoiceInfo.caja,
             cliente: cliente.nombre,
             fecha: new Date().toISOString().split('T')[0],
             hora: new Date().toLocaleTimeString(),
             total: totalFinal,
             estado: 'Pagada',
             formaPago: invoiceInfo.formaPago,
-            items: items
+            items: items,
+            comision: totals.comisionVal,
+            descuento: totals.totalDesc
         };
 
         // 1. Guardar factura
@@ -232,7 +303,7 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
 
         if (onSuccess) onSuccess(nuevaFactura);
         setShowPrintModal(false);
-        setItems([{ codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '' }]);
+        setItems([{ codigo: '', material: '', peso: '', precio: '', total: 0, bodega: '', iva: 15 }]);
         setCliente({ nombre: '', ruc: '', direccion: '', email: '', telefono: '', residencia: '' });
     };
 
@@ -270,11 +341,30 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
             )}
 
             <form onSubmit={handleGenerate} className="glass invoice-form no-print">
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '15px' }}>
+                    <FunctionLupa
+                        tipo={tipoFactura}
+                        onSelect={handleSelectCliente}
+                        icon={
+                            <>
+                                <FontAwesomeIcon icon={byPrefixAndName.fasds['magnifying-glass']} />
+                                <span style={{ marginLeft: '8px', fontSize: '0.9rem' }}>Buscar {tipoFactura === 'venta' ? 'Cliente' : 'Proveedor'}</span>
+                            </>
+                        }
+                    />
+                </div>
                 <div className="invoice-section">
                     <div className="form-grid">
                         <div className="form-group">
                             <label>{tipoFactura === 'venta' ? 'Nombre / Comprador' : 'Proveedor'}</label>
-                            <input type="text" name="nombre" value={cliente.nombre} onChange={handleClienteChange} className="glass-input" required />
+                            <input
+                                type="text"
+                                name="nombre"
+                                value={cliente.nombre}
+                                onChange={handleClienteChange}
+                                className="glass-input"
+                                required
+                            />
                         </div>
                         <div className="form-group">
                             <label>RUC / Cédula</label>
@@ -295,6 +385,29 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                         <div className="form-group">
                             <label>Email</label>
                             <input type="email" name="email" value={cliente.email} onChange={handleClienteChange} className="glass-input" />
+                        </div>
+                        <div className="form-group">
+                            <label>Tipo Documento</label>
+                            <select
+                                value={invoiceInfo.tipoDocumento}
+                                onChange={(e) => setInvoiceInfo({ ...invoiceInfo, tipoDocumento: e.target.value })}
+                                className="glass-input"
+                            >
+                                <option value="Factura" style={{ background: '#111' }}>Factura</option>
+                                <option value="Nota de Venta" style={{ background: '#111' }}>Nota de Venta</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Caja</label>
+                            <select
+                                value={invoiceInfo.caja}
+                                onChange={(e) => setInvoiceInfo({ ...invoiceInfo, caja: e.target.value })}
+                                className="glass-input"
+                            >
+                                <option value="Caja Principal" style={{ background: '#111' }}>Caja Principal</option>
+                                <option value="Caja 2" style={{ background: '#111' }}>Caja 2</option>
+                                <option value="Caja Chica" style={{ background: '#111' }}>Caja Chica</option>
+                            </select>
                         </div>
                         <div className="form-group">
                             <label>Forma de Pago</label>
@@ -341,6 +454,7 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                                 <th>Material</th>
                                 <th>Peso (kg)</th>
                                 <th>Precio Unit.</th>
+                                <th style={{ width: '80px' }}>IVA</th>
                                 <th>Total</th>
                                 <th>Acción</th>
                             </tr>
@@ -385,6 +499,18 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                                         <input type="number" name="precio" value={item.precio} onChange={(e) => handleItemChange(index, e)} className="glass-input" placeholder="0.00" step="0.01" required />
                                     </td>
                                     <td>
+                                        <select
+                                            name="iva"
+                                            value={item.iva}
+                                            onChange={(e) => handleItemChange(index, e)}
+                                            className="glass-input"
+                                            style={{ padding: '5px' }}
+                                        >
+                                            <option value="15" style={{ background: '#111' }}>15%</option>
+                                            <option value="0" style={{ background: '#111' }}>0%</option>
+                                        </select>
+                                    </td>
+                                    <td>
                                         <span className="total-display">${item.total}</span>
                                     </td>
                                     <td>
@@ -397,43 +523,74 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                     <button type="button" onClick={addItem} className="btn-add-item">+ Añadir Material</button>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '40px', marginTop: '30px' }}>
-                    <div className="driver-info-box glass" style={{ padding: '15px', flex: 1, fontSize: '0.85rem', background: 'rgba(0, 242, 254, 0.03)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', marginTop: '30px' }}>
+                    {/* Configuraciones de Costos y Descuentos */}
+                    <div className="cost-settings glass" style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div className="form-group">
+                            <label>Comisión (%)</label>
                             <input
-                                type="checkbox"
-                                id="ivaToggle"
-                                checked={conIVA}
-                                onChange={(e) => setConIVA(e.target.checked)}
-                                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                                type="number"
+                                value={invoiceInfo.comisionPorcentaje}
+                                onChange={(e) => setInvoiceInfo({ ...invoiceInfo, comisionPorcentaje: e.target.value })}
+                                className="glass-input"
+                                placeholder="0"
                             />
-                            <label htmlFor="ivaToggle" style={{ fontSize: '1rem', cursor: 'pointer', fontWeight: 'bold' }}>
-                                Aplicar IVA (15%)
-                            </label>
                         </div>
-                        <p style={{ color: 'var(--text-dim)' }}>💡 <strong>Pro-Tip:</strong> Verifica que los códigos de material coincidan con el inventario para una trazabilidad perfecta.</p>
+                        <div className="form-group">
+                            <label>Descuento (%)</label>
+                            <input
+                                type="number"
+                                value={invoiceInfo.descuentoPorcentaje}
+                                onChange={(e) => setInvoiceInfo({ ...invoiceInfo, descuentoPorcentaje: e.target.value })}
+                                className="glass-input"
+                                placeholder="0"
+                            />
+                        </div>
+                        <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                            <label>Descuento (valor fijo $)</label>
+                            <input
+                                type="number"
+                                value={invoiceInfo.descuentoValor}
+                                onChange={(e) => setInvoiceInfo({ ...invoiceInfo, descuentoValor: e.target.value })}
+                                className="glass-input"
+                                placeholder="0.00"
+                            />
+                        </div>
                     </div>
 
+                    {/* Resumen Final Detallado */}
                     <div className="invoice-summary" style={{ margin: 0 }}>
                         <div className="summary-row">
-                            <span>Subtotal:</span>
-                            <span>${calculateSubtotal()}</span>
+                            <span>Subtotal IVA 15%:</span>
+                            <span>${calculateTotals().sub15}</span>
                         </div>
-                        {conIVA && (
-                            <div className="summary-row">
-                                <span>IVA (15%):</span>
-                                <span>${(calculateSubtotal() * 0.15).toFixed(2)}</span>
-                            </div>
-                        )}
-                        {!conIVA && (
-                            <div className="summary-row">
-                                <span>IVA (0%):</span>
-                                <span>$0.00</span>
-                            </div>
-                        )}
+                        <div className="summary-row">
+                            <span>Subtotal IVA 0%:</span>
+                            <span>${calculateTotals().sub0}</span>
+                        </div>
+                        <div className="summary-row" style={{ color: 'var(--primary)' }}>
+                            <span>Comisión:</span>
+                            <span>+${calculateTotals().comisionVal}</span>
+                        </div>
+                        <div className="summary-row" style={{ color: '#f87171' }}>
+                            <span>Descuento Total:</span>
+                            <span>-${calculateTotals().totalDesc}</span>
+                        </div>
+                        <div className="summary-row" style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
+                            <span>Subt. con desc. IVA 15%:</span>
+                            <span>${calculateTotals().subConDesc15}</span>
+                        </div>
+                        <div className="summary-row" style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
+                            <span>Subt. con desc. IVA 0%:</span>
+                            <span>${calculateTotals().subConDesc0}</span>
+                        </div>
+                        <div className="summary-row">
+                            <span>IVA (15%):</span>
+                            <span>${calculateTotals().iva15}</span>
+                        </div>
                         <div className="summary-row total" style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--glass-border)' }}>
                             <span>TOTAL:</span>
-                            <span>${(conIVA ? calculateSubtotal() * 1.15 : calculateSubtotal()).toFixed(2)}</span>
+                            <span>${calculateTotals().total}</span>
                         </div>
                     </div>
                 </div>

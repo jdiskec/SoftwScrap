@@ -9,7 +9,7 @@ const Clientes = () => {
         ];
     });
 
-    const [newCli, setNewCli] = useState({ name: '', ci: '', phone: '', email: '' });
+    const [newCli, setNewCli] = useState({ name: '', ci: '', phone: '', email: '', direccion: '', residencia: '' });
 
     useEffect(() => {
         localStorage.setItem('clientes', JSON.stringify(clientes));
@@ -18,7 +18,7 @@ const Clientes = () => {
     const handleAdd = (e) => {
         e.preventDefault();
         setClientes([...clientes, { ...newCli, id: Date.now() }]);
-        setNewCli({ name: '', ci: '', phone: '', email: '' });
+        setNewCli({ name: '', ci: '', phone: '', email: '', direccion: '', residencia: '' });
     };
 
     const handleDelete = (id) => {
@@ -48,6 +48,14 @@ const Clientes = () => {
                     <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem' }}>Email</label>
                     <input type="email" className="glass" style={{ width: '100%', padding: '10px' }} value={newCli.email} onChange={(e) => setNewCli({ ...newCli, email: e.target.value })} />
                 </div>
+                <div>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem' }}>Dirección</label>
+                    <input type="text" className="glass" style={{ width: '100%', padding: '10px' }} value={newCli.direccion} onChange={(e) => setNewCli({ ...newCli, direccion: e.target.value })} />
+                </div>
+                <div>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem' }}>Nro. Residencia</label>
+                    <input type="text" className="glass" style={{ width: '100%', padding: '10px' }} value={newCli.residencia} onChange={(e) => setNewCli({ ...newCli, residencia: e.target.value })} />
+                </div>
                 <button type="submit" className="btn-primary" style={{ padding: '10px', gridColumn: '1 / -1' }}>Registrar Cliente</button>
             </form>
 
@@ -59,6 +67,8 @@ const Clientes = () => {
                             <th style={{ padding: '15px' }}>ID / Cédula</th>
                             <th style={{ padding: '15px' }}>Teléfono</th>
                             <th style={{ padding: '15px' }}>Email</th>
+                            <th style={{ padding: '15px' }}>Dirección</th>
+                            <th style={{ padding: '15px' }}>Nro. Residencia</th>
                             <th style={{ padding: '15px' }}>Acciones</th>
                         </tr>
                     </thead>
@@ -69,6 +79,8 @@ const Clientes = () => {
                                 <td style={{ padding: '15px' }}>{c.ci}</td>
                                 <td style={{ padding: '15px' }}>{c.phone}</td>
                                 <td style={{ padding: '15px' }}>{c.email}</td>
+                                <td style={{ padding: '15px' }}>{c.direccion}</td>
+                                <td style={{ padding: '15px' }}>{c.residencia}</td>
                                 <td style={{ padding: '15px' }}>
                                     <button onClick={() => handleDelete(c.id)} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}>Eliminar</button>
                                 </td>

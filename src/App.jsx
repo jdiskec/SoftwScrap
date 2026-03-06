@@ -22,11 +22,8 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (role) => {
-    if (role === 'admin') {
-      setView('admin');
-    } else {
-      setView('home');
-    }
+    // Todos los inicios de sesión exitosos redirigen al panel administrativo
+    setView('admin');
   };
 
   const renderView = () => {
