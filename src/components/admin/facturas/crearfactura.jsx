@@ -59,7 +59,6 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
 
     // Estados para control de impresión/modales
     const [showPrintModal, setShowPrintModal] = useState(false);
-    const [showPreview, setShowPreview] = useState(false);
     const [printerType, setPrinterType] = useState('normal');
     const [conIVA, setConIVA] = useState(true);
     const [tipoFactura, setTipoFactura] = useState(fixedType || 'venta');
@@ -596,9 +595,6 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                 </div>
 
                 <div className="form-actions" style={{ marginTop: '30px', gap: '15px', display: 'flex' }}>
-                    <button type="button" onClick={() => setShowPreview(true)} className="glass-btn" style={{ padding: '15px 30px' }}>
-                        👁️ Vista Previa
-                    </button>
                     <button type="submit" className="btn-primary" style={{ padding: '15px 40px', flex: isEmbedded ? 1 : 'unset' }}>
                         📄 Procesar Factura e Imprimir
                     </button>
@@ -627,34 +623,6 @@ const CrearFactura = ({ onBack, onSuccess, isEmbedded = false, fixedType = null 
                 </div>
             </div>
 
-            {showPreview && (
-                <div className="modal-overlay" style={{ zIndex: 3000 }}>
-                    <div className="glass" style={{ width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', padding: '40px', background: '#fff', color: '#000' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
-                            <h3 style={{ margin: 0 }}>Vista Previa de Impresión</h3>
-                            <button onClick={() => setShowPreview(false)} style={{ background: '#eee', border: 'none', padding: '5px 15px', borderRadius: '5px', cursor: 'pointer' }}>Cerrar</button>
-                        </div>
-                        <div style={{ padding: '20px', border: '1px solid #ddd' }}>
-                            {/* ... simplified preview ... */}
-                            <h2>{emisor.nombre}</h2>
-                            <p>Nro: {invoiceInfo.nroDocumento}</p>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr><th>Detalle</th><th>Peso</th><th>Precio</th><th>Total</th></tr>
-                                </thead>
-                                <tbody>
-                                    {items.map((item, idx) => (
-                                        <tr key={idx}><td>{item.material}</td><td>{item.peso}</td><td>{item.precio}</td><td>{item.total}</td></tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div style={{ textAlign: 'right', marginTop: '20px' }}>
-                                <strong>Total: ${(conIVA ? calculateSubtotal() * 1.15 : calculateSubtotal()).toFixed(2)}</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {showPrintModal && (
                 <div className="modal-overlay">

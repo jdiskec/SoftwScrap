@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './Facturas.css';
+import './Facturascompra.css';
 
 /**
- * Componente Facturas
- * Maneja la visualización de facturas de compra y la creación de nuevas.
+ * Componente Facturascompra
+ * Maneja la visualización de facturas de compra y la creación de nuevas con lógica avanzada.
  */
-const Facturas = () => {
+const Facturascompra = () => {
     const [view, setView] = useState('list'); // 'list', 'create', 'report'
     const [filters, setFilters] = useState({
         desde: '',
@@ -28,15 +28,17 @@ const Facturas = () => {
         almacen: 'Bodega Principal',
         categoria: 'Materia Prima',
         formaPago: 'Contado',
-        disponibleCaja: 1540.50, // Ejemplo
+        disponibleCaja: 1540.50,
+        caja: 'Caja Principal',
         totalPagar: 0,
         billete: 0,
         cambio: 0,
         detalleIVA15: 0,
         detalleIVA0: 0,
         descuento: 0,
-        descuentoIVA15: 0,
-        descuentoIVA0: 0,
+        descuentoPorcentaje: 0,
+        descuentoValor: 0,
+        comisionPorcentaje: 0,
         montoICE: 0,
         iva15: 0,
         total: 0
@@ -104,29 +106,45 @@ const Facturas = () => {
     const calculateTotals = (currentItems) => {
         let subtotal15 = 0;
         let subtotal0 = 0;
-        let totalDesc = 0;
 
         currentItems.forEach(item => {
             const sub = parseFloat(item.subtotal) || 0;
-            if (item.iva === 15) {
+            if (parseInt(item.iva) === 15) {
                 subtotal15 += sub;
             } else {
                 subtotal0 += sub;
             }
-            totalDesc += (parseFloat(item.descuento) || 0);
         });
 
-        const iva15 = subtotal15 * 0.15;
-        const total = subtotal15 + subtotal0 + iva15;
+        const bruto = subtotal15 + subtotal0;
+        const comision = bruto * (parseFloat(formData.comisionPorcentaje || 0) / 100);
+
+        // Descuentos
+        const descPct = parseFloat(formData.descuentoPorcentaje || 0);
+        const descFixed = parseFloat(formData.descuentoValor || 0);
+        const totalDesc = (bruto * (descPct / 100)) + descFixed;
+
+        // Distribución proporcional
+        const ratio15 = bruto > 0 ? (subtotal15 / bruto) : 1;
+        const ratio0 = bruto > 0 ? (subtotal0 / bruto) : 0;
+
+        const desc15 = totalDesc * ratio15;
+        const desc0 = totalDesc * ratio0;
+
+        const subConDesc15 = Math.max(0, subtotal15 - desc15);
+        const subConDesc0 = Math.max(0, subtotal0 - desc0);
+
+        const iva15Val = subConDesc15 * 0.15;
+        const finalTotal = subConDesc15 + subConDesc0 + iva15Val + comision;
 
         setFormData(prev => ({
             ...prev,
             detalleIVA15: subtotal15,
             detalleIVA0: subtotal0,
             descuento: totalDesc,
-            iva15: iva15,
-            total: total,
-            totalPagar: total
+            iva15: iva15Val,
+            total: finalTotal,
+            totalPagar: finalTotal
         }));
     };
 
@@ -247,10 +265,26 @@ const Facturas = () => {
                             </div>
                             <div className="form-group">
                                 <label>Tipo Documento</label>
-                                <select className="glass-input">
-                                    <option>Factura</option>
-                                    <option>Nota de Venta</option>
-                                    <option>Liquidación de Compra</option>
+                                <select
+                                    className="glass-input"
+                                    value={formData.tipoDocumento}
+                                    onChange={(e) => setFormData({ ...formData, tipoDocumento: e.target.value })}
+                                >
+                                    <option value="Factura">Factura</option>
+                                    <option value="Nota de Venta">Nota de Venta</option>
+                                    <option value="Liquidación de Compra">Liquidación de Compra</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Caja</label>
+                                <select
+                                    className="glass-input"
+                                    value={formData.caja}
+                                    onChange={(e) => setFormData({ ...formData, caja: e.target.value })}
+                                >
+                                    <option value="Caja Principal">Caja Principal</option>
+                                    <option value="Caja 2">Caja 2</option>
+                                    <option value="Caja Chica">Caja Chica</option>
                                 </select>
                             </div>
                             <div className="form-group" style={{ gridColumn: 'span 2' }}>
@@ -357,9 +391,9 @@ const Facturas = () => {
 
                     {/* Pago y Totales */}
                     <div className="glass form-section" style={{ gridColumn: 'span 3', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '30px' }}>
-                        {/* Forma de Pago */}
+                        {/* Forma de Pago y Caja */}
                         <div>
-                            <h5 style={{ color: 'var(--primary)', marginBottom: '15px' }}>💳 Forma de Pago</h5>
+                            <h5 style={{ color: 'var(--primary)', marginBottom: '15px' }}>💳 Pago y Caja</h5>
                             <div className="form-group">
                                 <label>Método</label>
                                 <select value={formData.formaPago} onChange={(e) => setFormData({ ...formData, formaPago: e.target.value })} className="glass-input">
@@ -368,8 +402,8 @@ const Facturas = () => {
                                 </select>
                             </div>
                             <div style={{ marginTop: '15px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                <div style={{ fontSize: '0.8rem' }}>Disponible en caja:</div>
-                                <div style={{ color: '#4ade80', fontWeight: 'bold' }}>${formData.disponibleCaja.toFixed(2)}</div>
+                                <div style={{ fontSize: '0.8rem' }}>Caja: <span style={{ color: 'var(--primary)' }}>{formData.caja}</span></div>
+                                <div style={{ fontSize: '0.8rem' }}>Disponible: <span style={{ color: '#4ade80' }}>${formData.disponibleCaja.toFixed(2)}</span></div>
                             </div>
                         </div>
 
@@ -414,15 +448,30 @@ const Facturas = () => {
                                 🧾 Resumen de Auditoría
                             </div>
                             <div className="summary-row"><span>Subtotal IVA 15%:</span><span>${formData.detalleIVA15.toFixed(2)}</span></div>
-                            <div className="summary-row"><span>Subtotal 0%:</span><span>${formData.detalleIVA0.toFixed(2)}</span></div>
-                            <div className="summary-row"><span>Descuento:</span><span>-${formData.descuento.toFixed(2)}</span></div>
-                            <div className="summary-row"><span>Subt. con desc. 15%:</span><span>${(formData.detalleIVA15 - formData.descuentoIVA15).toFixed(2)}</span></div>
-                            <div className="summary-row"><span>Subt. con desc. 0%:</span><span>${(formData.detalleIVA0 - formData.descuentoIVA0).toFixed(2)}</span></div>
-                            <div className="summary-row"><span>Monto ICE:</span><span>${formData.montoICE.toFixed(2)}</span></div>
+                            <div className="summary-row"><span>Subtotal IVA 0%:</span><span>${formData.detalleIVA0.toFixed(2)}</span></div>
+                            <div className="summary-row" style={{ color: 'var(--primary)' }}><span>Comisión:</span><span>+${(formData.total - (formData.detalleIVA15 + formData.detalleIVA0 - formData.descuento + (formData.detalleIVA15 * 0.15))).toFixed(2)}</span></div>
+                            <div className="summary-row" style={{ color: '#f87171' }}><span>Descuento Total:</span><span>-${formData.descuento.toFixed(2)}</span></div>
+
+                            <div className="summary-row" style={{ fontStyle: 'italic', fontSize: '0.8rem' }}>
+                                <span>Comisión (%)</span>
+                                <input type="number" value={formData.comisionPorcentaje} onChange={(e) => setFormData({ ...formData, comisionPorcentaje: e.target.value })} className="table-input" style={{ width: '60px' }} />
+                            </div>
+                            <div className="summary-row" style={{ fontStyle: 'italic', fontSize: '0.8rem' }}>
+                                <span>Desc. (%)</span>
+                                <input type="number" value={formData.descuentoPorcentaje} onChange={(e) => setFormData({ ...formData, descuentoPorcentaje: e.target.value })} className="table-input" style={{ width: '60px' }} />
+                            </div>
+                            <div className="summary-row" style={{ fontStyle: 'italic', fontSize: '0.8rem' }}>
+                                <span>Desc. ($)</span>
+                                <input type="number" value={formData.descuentoValor} onChange={(e) => setFormData({ ...formData, descuentoValor: e.target.value })} className="table-input" style={{ width: '60px' }} />
+                            </div>
+
                             <div className="summary-row"><span>IVA 15%:</span><span>${formData.iva15.toFixed(2)}</span></div>
                             <div className="summary-row total"><span>TOTAL:</span><span>${formData.total.toFixed(2)}</span></div>
 
-                            <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '20px', padding: '15px' }}>💾 Guardar Factura</button>
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                                <button type="button" onClick={() => alert('Generando XML...')} className="glass-btn" style={{ flex: 1, padding: '10px' }}>📦 XML</button>
+                                <button type="submit" className="btn-primary" style={{ flex: 2, padding: '10px' }}>💾 Guardar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -471,6 +520,7 @@ const Facturas = () => {
         </div>
     );
 
+
     return (
         <div className="facturas-container">
             {view === 'list' && renderListView()}
@@ -480,4 +530,4 @@ const Facturas = () => {
     );
 };
 
-export default Facturas;
+export default Facturascompra;

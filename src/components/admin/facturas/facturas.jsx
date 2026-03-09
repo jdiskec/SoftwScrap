@@ -15,8 +15,10 @@ const Facturas = () => {
             const data = saved ? JSON.parse(saved) : [
                 { id: 'VEN-001', tipo: 'venta', cliente: 'Metalúrgica del Sur', fecha: '2026-02-01', total: 1250.50, estado: 'Pagada' }
             ];
+            // Asegurar que data es un arreglo antes de filtrar
+            const dataArray = Array.isArray(data) ? data : [];
             // Solo mostrar ventas
-            return data.filter(f => f.tipo === 'venta');
+            return dataArray.filter(f => f.tipo === 'venta');
         } catch (e) {
             console.error("Error cargando facturas:", e);
             return [];

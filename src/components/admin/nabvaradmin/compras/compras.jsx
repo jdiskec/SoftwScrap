@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Facturas from './Facturas';
+import Facturas from './Facturascompra';
 import Gastos from './gastos';
 import CuentasPorPagar from './cuentasporpagar';
 import CategoriaGasto from './categoriagasto';

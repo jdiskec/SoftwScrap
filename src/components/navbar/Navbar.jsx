@@ -1,3 +1,4 @@
+import React from 'react';
 import logo from '../../assets/logoecoscrap.png';
 import DiaNoche from '../background/dianoche';
 

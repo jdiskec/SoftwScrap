@@ -36,6 +36,11 @@ const AdminDashboard = ({ onLogout }) => {
         { id: 'facturas', label: '📝 Facturación', component: <Facturas /> },
         {
             id: 'inventario',
+            label: 'Inventario / Acopio',
+            component: <AdminInventory />
+        },
+        {
+            id: 'compras',
             label: 'Compras',
             icon: <FontAwesomeIcon icon={byPrefixAndName.fatl['bag-shopping']} style={{ marginRight: '10px' }} />,
             component: <Compras />
@@ -49,7 +54,7 @@ const AdminDashboard = ({ onLogout }) => {
     ];
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', backgroundColor: 'var(--bg-main)', color: 'var(--text-main)' }}>
+        <div style={{ minHeight: '100vh', display: 'flex', backgroundColor: 'var(--bg-main, #0a0a0b)', color: 'var(--text-main, #ffffff)' }}>
             {/* Panel Lateral (Sidebar) */}
             <div className="glass" style={{
                 width: '280px',
